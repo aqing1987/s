@@ -131,18 +131,21 @@ div.navbar {
     text-decoration: none;
 }
 
-#langsactive:link, #langsactive:visited {
+#langsactive:link, #langsactive:visited,
+#toolsactive:link, #toolsactive:visited {
                        color: white;
                        font-weight: bold;
                        padding: 5px 20px;
 }
 
-#langs:link, #langs:visited {
+#langs:link, #langs:visited,
+#tools:link, #tools:visited {
                  font-weight: bold;
                  color: #777;
 }
 
-#langs:hover, #langs:hover {
+#langs:hover, #langsactive:hover,
+#tools:hover, #toolsactive:hover {
                   background-color: #ddd
 }
 
@@ -188,7 +191,7 @@ div.navbar {
     color: white;
 }
 
-#Amenulist a:hover {
+#toolsmenulist a:hover {
     background: #92d800;
     color: white;
 }
@@ -214,11 +217,11 @@ div.navbar {
 }
 
 #langsactive:link, #langsactive:visited {
-                     background: #0072ff;
+                       background: #0072ff;
 }
 
-#Bactive:link, #Bactive:visited {
-                      background: #92d800;
+#toolsactive:link, #toolsactive:visited {
+                       background: #92d800;
 }
 
 #Cactive:link, #Cactive:visited {
