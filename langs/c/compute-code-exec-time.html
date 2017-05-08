@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Computer Languages</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <div id="banner">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </div>
+
+    <div class="navbar">
+      <ul id="menu">
+        <li><a id="tools" href="/tools/">TOOLS</a></li>
+        <li><a id="langsactive" href="/langs/">LANGS</a></li>
+      </ul>
+    </div>
+
+    <div id="leftmenu">
+      <ul id="langsmenulist">
+        <li><a href="/langs/c/">c</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <h1>compute code execute time</h1>
+      <br/>
+
+      <p><em>gettimeofday()</em> is the best API to compute code execute time current now. See the following sample:</p>
+
+      <pre class="src src-c"><span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;stdio.h&gt;</span>
+<span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;unistd.h&gt;</span>
+<span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;sys/time.h&gt;</span>
+
+<span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">main</span>(<span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">argc</span>, <span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">argv</span>[]) {
+
+  <span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">timeval</span> <span style="color: #FD971F;">start_st</span>, <span style="color: #FD971F;">end_st</span>;
+  <span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">long</span> <span style="color: #FD971F;">total_tm</span> = 0;
+
+  <span style="color: #75715E;">// </span><span style="color: #75715E;">int gettimeofday(struct timeval *tv, struct timezone *tz);</span>
+  gettimeofday(&amp;start_st, <span style="color: #AE81FF;">NULL</span>);
+
+  sleep(2);
+
+  gettimeofday(&amp;end_st, <span style="color: #AE81FF;">NULL</span>);
+
+  total_tm = 1000000 * (end_st.tv_sec - start_st.tv_sec) +
+      (end_st.tv_usec - start_st.tv_usec);
+
+  printf(<span style="color: #E6DB74;">"exec time = %ld (us)\n"</span>, total_tm);
+
+  <span style="color: #F92672;">return</span> 0;
+}
+      </pre>
+
+      <div id="footer">
+        <p>&copy; MMXVII</p>
+      </div>
+    </div>
+  </body>
+</html>
