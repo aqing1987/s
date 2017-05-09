@@ -132,20 +132,23 @@ div.navbar {
 }
 
 #langsactive:link, #langsactive:visited,
-#toolsactive:link, #toolsactive:visited {
+#toolsactive:link, #toolsactive:visited,
+#booklistactive:link, #tooklistactive:visited {
   color: white;
   font-weight: bold;
   padding: 5px 20px;
 }
 
 #langs:link, #langs:visited,
-#tools:link, #tools:visited {
+#tools:link, #tools:visited,
+#booklist:link, #booklist:visited {
   font-weight: bold;
   color: #777;
 }
 
 #langs:hover, #langsactive:hover,
-#tools:hover, #toolsactive:hover {
+#tools:hover, #toolsactive:hover,
+#booklist:hover, #booklistactive:hover {
   background-color: #ddd
 }
 
@@ -196,7 +199,7 @@ div.navbar {
   color: white;
 }
 
-#Bmenulist a:hover {
+#booklistmenulist a:hover {
   background: #a27700;
   color: white;
 }
@@ -224,7 +227,7 @@ div.navbar {
   background: #92d800;
 }
 
-#Cactive:link, #Cactive:visited {
+#booklistactive:link, #booklistactive:visited {
   background: #a27700;
 }
 
