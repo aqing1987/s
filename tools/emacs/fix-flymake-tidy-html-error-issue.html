@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>fix flymake tidy html error issue</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <div id="banner">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </div>
+
+    <div class="navbar">
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="toolsactive" href="/tools/">TOOLS</a></li>
+        <li><a id="langs" href="/langs/">LANGS</a></li>
+      </ul>
+    </div>
+
+    <div id="leftmenu">
+      <ul id="toolsmenulist">
+        <li><a href="/tools/emacs/">emacs</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <h1>fix flymake tidy html error issue</h1>
+      <br/>
+
+      <div id="table-of-contents">
+        <h2>Table of Contents</h2>
+        <div id="text-table-of-contents">
+          <ul>
+            <li><a href="#sec-1">1. reference</a></li>
+            <li><a href="#sec-2">2. description</a></li>
+            <li><a href="#sec-3">3. analysis</a></li>
+            <li><a href="#sec-4">4. fix steps</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-1" class="outline-2">
+        <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+        <div class="outline-text-2" id="text-1">
+          <p>
+            <a href="https://www.emacswiki.org/emacs/FlymakeHtml">
+              https://www.emacswiki.org/emacs/FlymakeHtml</a>
+          </p>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-2" class="outline-2">
+        <h2 id="sec-2"><span class="section-number-2">2</span> description</h2>
+        <div class="outline-text-2" id="text-2">
+          <p>os: ubuntu 16.04 desktop</p>
+          <p>emacs: GNU Emacs 24.5.1</p>
+          <br/>
+          <p>
+            The error info as below:
+          </p>
+          <div class="org-src-container">
+
+            <pre class="src src-info">
+switched OFF Flymake mode for buffer emacs-default-keys.html due to fatal
+status CFGERR, warning Configuration error has occurred while running
+(tidy emacs-default-keys_flymake.html)
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-3" class="outline-2">
+        <h2 id="sec-3"><span class="section-number-2">3</span> analysis</h2>
+        <div class="outline-text-2" id="text-3">
+          <p>
+            current installed tidy is too old. Replace it by using tidy-html5.
+          </p>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-4" class="outline-2">
+        <h2 id="sec-4"><span class="section-number-2">4</span> fix steps</h2>
+        <div class="outline-text-2" id="text-4">
+          <div class="org-src-container">
+            <pre class="src src-sh">
+$ git clone https://github.com/htacg/tidy-html5.git
+
+$ sudo apt install xsltproc
+
+$ cd build/cmake
+
+$ cmake ../.. -DCMAKE_BUILD_TYPE=Release
+
+$ make
+
+$ sudo make install
+            </pre>
+          </div>
+
+          <p>
+            After these operations, you can use flymake for html in
+            emacs now.</p>
+        </div>
+      </div>
+
+      <br/>
+      <div id="footer">
+        <p>&copy; MMXVII</p>
+      </div>
+    </div>
+  </body>
+</html>
