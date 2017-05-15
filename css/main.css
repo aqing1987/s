@@ -309,3 +309,11 @@ div.main {
   padding: 3pt;
   margin: 0 10pt;
 }
+
+.article_date {
+  padding-left: 5pt;
+  margin-bottom: 8pt;
+  color: #777;
+  font-size: .8em;
+  font-style: italic;
+}
