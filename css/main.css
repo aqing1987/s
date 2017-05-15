@@ -19,6 +19,9 @@ h1 {
   font-size: 1.7em;
   text-decoration: underline;
 }
+h1.title {
+  margin-bottom: 5pt;
+}
 
 h2 {
   color: #333;
