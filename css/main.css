@@ -133,7 +133,7 @@ div.navbar {
 
 #langsactive:link, #langsactive:visited,
 #toolsactive:link, #toolsactive:visited,
-#booklistactive:link, #tooklistactive:visited {
+#booklistactive:link, #booklistactive:visited {
   color: white;
   font-weight: bold;
   padding: 5px 20px;
