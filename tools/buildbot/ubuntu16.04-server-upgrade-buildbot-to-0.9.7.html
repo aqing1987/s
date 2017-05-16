@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>buildbot notes</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <div id="banner">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </div>
+
+    <div class="navbar">
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="toolsactive" href="/tools/">TOOLS</a></li>
+        <li><a id="langs" href="/langs/">LANGS</a></li>
+      </ul>
+    </div>
+
+    <div id="leftmenu">
+      <ul id="toolsmenulist">
+        <li><a href="/tools/buildbot/">buildbot</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <h1 class="title">upgrade buildbot from 0.8.12 to 0.9.7</h1>
+      <div class="article_date">May 16 2017</div>
+      <br/>
+
+      <div id="table-of-contents">
+        <h2>Table of Contents</h2>
+        <div id="text-table-of-contents">
+          <ul>
+            <li><a href="#sec-1">1. reference</a></li>
+            <li><a href="#sec-2">2. description</a></li>
+            <li><a href="#sec-3">3. upgrade solution</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-1" class="outline-2">
+        <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+        <div class="outline-text-2" id="text-1">
+          <p>
+            <a href="http://buildbot.net/">http://buildbot.net/</a>
+          </p>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-2" class="outline-2">
+        <h2 id="sec-2"><span class="section-number-2">2</span> description</h2>
+        <div class="outline-text-2" id="text-2">
+          <p>
+            We can install buildbot from ubuntu package repository:
+          </p>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ sudo apt install buildbot
+            </pre>
+          </div>
+
+          <p>
+            but its version(0.8.12) is too low, we decided to upgrade to the latest
+            0.9.7 and taste the new flavor.
+          </p>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-3" class="outline-2">
+        <h2 id="sec-3"><span class="section-number-2">3</span> upgrade solution</h2>
+        <div class="outline-text-2" id="text-3">
+          <ul class="org-ul">
+            <li>stop current buildbot
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ cd buildbot/
+$ buildbot stop master/
+$ buildslave stop slave/
+            </pre>
+          </div>
+
+          <ul class="org-ul">
+            <li>remove previous installed buildbot
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ sudo apt remove buildbot
+$ sudo apt remove buildbot-slave
+            </pre>
+          </div>
+
+          <ul class="org-ul">
+            <li>upgrade pip
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ sudo apt update
+$ sudo pip install --upgrade pip
+            </pre>
+          </div>
+
+          <ul class="org-ul">
+            <li>install buildbot 0.9.7
+            </li>
+          </ul>
+          <p>
+            Buildbot is now composed of several Python packages and Javascript UI,
+            and the easiest way to install it is to run the following command:
+          </p>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ sudo pip install <span style="color: #E6DB74;">'buildbot[bundle]==0.9.7'</span>
+$ sudo pip install buildbot-worker
+$ sudo pip install setuptools-trial
+            </pre>
+          </div>
+
+          <p>
+            If there is timeout issue, try again.
+          </p>
+
+          <ul class="org-ul">
+            <li>create the master and worker
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ mv master/ master-old
+$ mv slave/ slave-old
+$ buildbot create-master -r master
+$ buildbot-worker create-worker worker localhost example-worker pass
+            </pre>
+          </div>
+
+          <ul class="org-ul">
+            <li>upgrade master.cfg
+            </li>
+          </ul>
+          <p>
+            to use our old master.cfg, we should do some modifications.
+          </p>
+          <div class="org-src-container">
+
+            <pre class="src src-info">1. c['status'] should be replaced with c['www']
+2. buildbot.status should be considered deprecated
+3. the whole c['status'] configuration parameter is gone
+4. all reporters should be included in c['services']
+5. all identifiers, messages and documentation were updated to use "worker"
+   instead of "slave".
+            </pre>
+          </div>
+
+          <ul class="org-ul">
+            <li>start buildbot
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ buildbot start master
+$ buildbot-worker start worker
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <br/>
+      <div id="footer">
+        <p>&copy; MMXVII</p>
+      </div>
+    </div>
+  </body>
+</html>
