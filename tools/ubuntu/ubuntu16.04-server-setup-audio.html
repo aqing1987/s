@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ubuntu notes</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <div id="banner">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </div>
+
+    <div class="navbar">
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="toolsactive" href="/tools/">TOOLS</a></li>
+        <li><a id="langs" href="/langs/">LANGS</a></li>
+      </ul>
+    </div>
+
+    <div id="leftmenu">
+      <ul id="toolsmenulist">
+        <li><a href="/tools/ubuntu/">ubuntu</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <h1 class="title">setup laptop audio for ubuntu 16.04 server</h1>
+      <div class="article_date">May 16 2017</div>
+      <br/>
+
+      <div id="table-of-contents">
+        <h2>Table of Contents</h2>
+        <div id="text-table-of-contents">
+          <ul>
+            <li><a href="#sec-1">1. description</a></li>
+            <li><a href="#sec-2">2. fix solution</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-1" class="outline-2">
+        <h2 id="sec-1"><span class="section-number-2">1</span> description</h2>
+        <div class="outline-text-2" id="text-1">
+          <p>
+            As default, there are no audio support in ubuntu 16.04 server.
+          </p>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-2" class="outline-2">
+        <h2 id="sec-2"><span class="section-number-2">2</span> fix solution</h2>
+        <div class="outline-text-2" id="text-2">
+          <ul class="org-ul">
+            <li>install pulseaudio and alsa-utils
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ sudo apt install pulseaudio
+$ sudo apt install pulseaudio-utils
+$ sudo apt install alsa-utils
+            </pre>
+          </div>
+
+          <ul class="org-ul">
+            <li>reboot the system
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ sudo reboot
+            </pre>
+          </div>
+
+          <ul class="org-ul">
+            <li>adjust the volume
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ alsamixer
+            </pre>
+          </div>
+
+          <ul class="org-ul">
+            <li>save the alsamixer config
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ sudo alsactl store
+            </pre>
+          </div>
+
+          <ul class="org-ul">
+            <li>test the audio (prepare the a.mp3 first)
+            </li>
+          </ul>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">$ sudo apt install mplayer
+$ mplayer a.mp3
+            </pre>
+          </div>
+        </div>
+      </div>
+      <br/>
+      <div id="footer">
+        <p>&copy; MMXVII</p>
+      </div>
+    </div>
+  </body>
+</html>
