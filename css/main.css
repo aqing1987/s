@@ -299,6 +299,10 @@ div.main {
   border-bottom: 1px solid #bcbcbc;
 }
 
+#footer a:link, #footer a:visited, #footer a:hover {
+  color: #bcbcbc;
+}
+
 
 /* Commands & notes                      */
 /* ===================================== */
