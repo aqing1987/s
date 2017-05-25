@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>Jingsi Chen Essays</title>
+    <description>Jingsi Chen's Essays RSS feed</description>
+    <link>http://www.chenjingsi.com/</link>
+
+    <ttl>1800</ttl>
+
+    <item>
+      <title>compute code exec time</title>
+      <description> compute code execute time by using c </description>
+      <link>http://www.chenjingsi.com/langs/c/compute-code-exec-time.html</link>
+      <pubDate>May 8 2017</pubDate>
+    </item>
+
+  </channel>
+</rss>
