@@ -283,6 +283,10 @@ div.main {
   padding-right: 180px;
 }
 
+div.main ul li {
+  margin-top: 5px;
+}
+
 #footer {
   border-top: 1px solid #ccc;
   margin-top: 20px;
