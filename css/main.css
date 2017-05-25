@@ -293,6 +293,12 @@ div.main {
   font-size: .8em;
 }
 
+#footer a {
+  color: #bcbcbc;
+  font-size: 1em;
+  border-bottom: 1px solid #bcbcbc;
+}
+
 
 /* Commands & notes                      */
 /* ===================================== */
