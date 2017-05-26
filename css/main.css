@@ -107,6 +107,7 @@ div.navbar {
   width: 100%;
   padding: 0;
   background-color: #eee;
+  background-color: #d7e9f6;
   text-align: right;
   border-top: solid 1px #ccc;
   border-bottom: solid 1px #ccc;
@@ -135,23 +136,20 @@ div.navbar {
   text-decoration: none;
 }
 
-#langsactive:link, #langsactive:visited,
-#toolsactive:link, #toolsactive:visited,
+#programmingactive:link, #programmingactive:visited,
 #booklistactive:link, #booklistactive:visited {
   color: white;
   font-weight: bold;
   padding: 5px 20px;
 }
 
-#langs:link, #langs:visited,
-#tools:link, #tools:visited,
+#programming:link, #programming:visited,
 #booklist:link, #booklist:visited {
   font-weight: bold;
   color: #777;
 }
 
-#langs:hover, #langsactive:hover,
-#tools:hover, #toolsactive:hover,
+#programming:hover, #programmingactive:hover,
 #booklist:hover, #booklistactive:hover {
   background-color: #ddd
 }
@@ -193,12 +191,12 @@ div.navbar {
   color: white;
 }
 
-#langsmenulist a:hover {
+#programmingmenulist a:hover {
   background: #0072ff;
   color: white;
 }
 
-#toolsmenulist a:hover {
+#Xmenulist a:hover {
   background: #92d800;
   color: white;
 }
@@ -223,11 +221,11 @@ div.navbar {
   color: white;
 }
 
-#langsactive:link, #langsactive:visited {
+#programmingactive:link, #programmingactive:visited {
   background: #0072ff;
 }
 
-#toolsactive:link, #toolsactive:visited {
+#Xactive:link, #Xactive:visited {
   background: #92d800;
 }
 
