@@ -8,10 +8,45 @@
     <ttl>1800</ttl>
 
     <item>
+      <title>how to install emacs25.2 in ubuntu16.04</title>
+      <link>http://www.chenjingsi.com/tools/emacs/emacs-00003.html</link>
+      <pubDate>May 26 2017</pubDate>
+    </item>
+    <item>
+      <title>fix buildbot multi-core compile not work issue</title>
+      <link>http://www.chenjingsi.com/tools/buildbot/buildbot-00002.html</link>
+      <pubDate>May 25 2017</pubDate>
+    </item>
+    <item>
+      <title>setup laptop audio for ubuntu 16.04 server</title>
+      <link>http://www.chenjingsi.com/tools/ubuntu/ubuntu-00001.html</link>
+      <pubDate>May 16 2017</pubDate>
+    </item>
+    <item>
+      <title>upgrade buildbot from 0.8.12 to 0.9.7</title>
+      <link>http://www.chenjingsi.com/tools/buildbot/buildbot-00001.html</link>
+      <pubDate>May 16 2017</pubDate>
+    </item>
+    <item>
+      <title>shell communicate with inner awk</title>
+      <link>http://www.chenjingsi.com/langs/shell/shell-00001.html</link>
+      <pubDate>May 15 2017</pubDate>
+    </item>
+    <item>
+      <title>fix flymake tidy html error issue</title>
+      <link>http://www.chenjingsi.com/tools/emacs/emacs-00002.html</link>
+      <pubDate>May 9 2017</pubDate>
+    </item>
+    <item>
       <title>compute code exec time</title>
       <description> compute code execute time by using c </description>
-      <link>http://www.chenjingsi.com/langs/c/compute-code-exec-time.html</link>
+      <link>http://www.chenjingsi.com/langs/c/c-00001.html</link>
       <pubDate>May 8 2017</pubDate>
+    </item>
+    <item>
+      <title>emacs default keys</title>
+      <link>http://www.chenjingsi.com/tools/emacs/emacs-00001.html</link>
+      <pubDate>May 5 2017</pubDate>
     </item>
 
   </channel>
