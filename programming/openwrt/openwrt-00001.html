@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Openwrt Notes</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <div id="banner">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </div>
+
+    <div class="navbar">
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+      </ul>
+    </div>
+
+    <div id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="./">Back</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <h1 class="title">add `ps -l' support for openwrt</h1>
+      <div class="article_date">May 27 2017</div>
+      <br/>
+
+      <div id="table-of-contents">
+        <h2>Table of Contents</h2>
+        <div id="text-table-of-contents">
+          <ul>
+            <li><a href="#sec-1">1. description</a></li>
+            <li><a href="#sec-2">2. add ps -l</a>
+              <ul>
+                <li><a href="#sec-2-1">2.1. set by `make menuconfig'</a></li>
+                <li><a href="#sec-2-2">2.2. quick test</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-1" class="outline-2">
+        <h2 id="sec-1"><span class="section-number-2">1</span> description</h2>
+        <div class="outline-text-2" id="text-1">
+          <p>
+            As default, when we run `ps', we can only see the following sections:
+          </p>
+          <div class="org-src-container">
+
+            <pre class="src src-sh">root@a:~# ps
+PID USER       VSZ STAT COMMAND
+    1 root      1416 S    /sbin/procd
+    2 root         0 SW   [kthreadd]
+    3 root         0 SW   [ksoftirqd/0]
+            </pre>
+          </div>
+
+          <p>
+            It's far from enough.
+          </p>
+        </div>
+      </div>
+
+      <div id="outline-container-sec-2" class="outline-2">
+        <h2 id="sec-2"><span class="section-number-2">2</span> add ps -l</h2>
+        <div class="outline-text-2" id="text-2">
+        </div><div id="outline-container-sec-2-1" class="outline-3">
+          <h3 id="sec-2-1"><span class="section-number-3">2.1</span> set by `make menuconfig'</h3>
+          <div class="outline-text-3" id="text-2-1">
+            <p>
+              do
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">make menuconfig
+              </pre>
+            </div>
+
+            <p>
+              then select `Enable long output option'
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-menuconfig">Base system  ---&gt;
+  busybox  ---&gt;
+    Process Utilities  ---&gt;
+      [*] ps
+      [*]   Enable long output option (-l)
+              </pre>
+            </div>
+
+            <p>
+              when -l enabled, save the configuration.
+              we can find `CONFIG_BUSYBOX_CONFIG_FEATURE_PS_LONG=y' in .config.
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2-2" class="outline-3">
+          <h3 id="sec-2-2"><span class="section-number-3">2.2</span> quick test</h3>
+          <div class="outline-text-3" id="text-2-2">
+            <p>
+              For quick test, compile busybox is enough:
+            </p>
+
+            <ul class="org-ul">
+              <li>compile busybox
+              </li>
+            </ul>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">$ make package/busybox/compile <span style="color: #FD971F;">V</span>=s
+              </pre>
+            </div>
+
+            <ul class="org-ul">
+              <li>copy to board
+
+                <p>
+                  Use ssh or tftp to replace the /bin/busybox in our board by using the new compiled one.
+                </p>
+
+                <p>
+                  The compiled `busybox' loacated in:
+                </p>
+              </li>
+            </ul>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">build_dir/target-mips_34kc_uClibc-0.9.33.2/busybox-1.23.2/
+              </pre>
+            </div>
+
+            <ul class="org-ul">
+              <li>Grant the execute privilege.
+              </li>
+            </ul>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">root@a:~# chmod +x /bin/busybox
+              </pre>
+            </div>
+
+            <ul class="org-ul">
+              <li>Then test it on board:
+              </li>
+            </ul>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">root@a:~# ps
+S   UID   PID  PPID   VSZ   RSS TTY   STIME TIME     CMD
+S     0     1     0  1416   644 0:0   May26 00:00:07 /sbin/procd
+S     0     2     0     0     0 0:0   May26 00:00:00 [kthreadd]
+S     0     3     2     0     0 0:0   May26 00:11:13 [ksoftirqd/0]
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br/>
+      <div id="footer">
+        <p>&copy; MMXVII</p>
+      </div>
+    </div>
+  </body>
+</html>

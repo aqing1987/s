@@ -8,6 +8,11 @@
     <ttl>1800</ttl>
 
     <item>
+      <title>add `ps -l' support for openwrt</title>
+      <link>http://www.chenjingsi.com/programming/openwrt/openwrt-00001.html</link>
+      <pubDate>May 27 2017</pubDate>
+    </item>
+    <item>
       <title>how to install emacs25.2 in ubuntu16.04</title>
       <link>http://www.chenjingsi.com/programming/emacs/emacs-00003.html</link>
       <pubDate>May 26 2017</pubDate>
