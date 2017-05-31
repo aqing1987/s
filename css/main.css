@@ -88,18 +88,20 @@ hr {
 /* Header: logo, top menu and search     */
 /* ===================================== */
 
-#banner {
+header.top {
   height: 47px;
 }
 
-#banner img {
+header.top img {
   position: absolute;
   left: 10px;
   top: 10px;
   border: none;
 }
 
-div.navbar {
+/* navigation bar                        */
+/* ===================================== */
+nav {
   position: absolute;
   top: 90px;
   border: 0;
@@ -113,21 +115,21 @@ div.navbar {
   border-bottom: solid 1px #ccc;
 }
 
-#menu {
+nav ul#menu {
   list-style-type: none;
   padding: 0;
   margin: 0;
   text-align: right;
 }
 
-#menu li {
+nav ul#menu li {
   display: inline;
   padding: 0;
   margin: 0;
   text-align: right;
 }
 
-#menu a {
+nav ul#menu a {
   float: right;
   display: block;
   padding: 5px 20px;
@@ -158,7 +160,7 @@ div.navbar {
 /* Project specfic left-hand menus       */
 /* ===================================== */
 
-#leftmenu ul {
+section#leftmenu ul {
   text-align: right;
   font-weight: bold;
   background: #eee;
@@ -172,12 +174,12 @@ div.navbar {
   margin: 0;
 }
 
-#leftmenu li {
+section#leftmenu li {
   margin: 0;
   border-bottom: solid 1px #ddd;
 }
 
-#leftmenu a {
+section#leftmenu a {
   text-decoration: none;
   border: none;
   display: block;
@@ -275,35 +277,35 @@ div.navbar {
 /* Main page content & footer            */
 /* ===================================== */
 
-div.main {
+section#main, section#blog {
   position: absolute;
   top: 140px;
   left: 150px;
   padding-right: 180px;
 }
 
-div.main ul li {
+section#main ul li {
   margin-top: 5px;
 }
 
-#footer {
+footer {
   border-top: 1px solid #ccc;
-  margin-top: 20px;
+  margin-top: 39px;
 }
 
-#footer p {
+footer p {
   color: #bcbcbc;
   font-size: .8em;
 }
 
-#footer a {
+footer a {
   color: #bcbcbc;
   font-size: 1em;
-  border-bottom: 1px solid #bcbcbc;
 }
 
-#footer a:link, #footer a:visited, #footer a:hover {
+footer a:link, footer a:visited, footer a:hover {
   color: #bcbcbc;
+  border-bottom: 1px solid #bcbcbc;
 }
 
 
@@ -326,7 +328,7 @@ div.main ul li {
   margin: 0 10pt;
 }
 
-.article_date {
+time {
   padding-left: 5pt;
   margin-bottom: 8pt;
   color: #777;

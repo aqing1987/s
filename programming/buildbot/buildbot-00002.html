@@ -8,28 +8,31 @@
     <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
   </head>
   <body>
-    <div id="banner">
+    <header class="top">
       <a href="/index.html">
         <img src="/images/s-logo.png" alt="s">
       </a>
-    </div>
+    </header>
 
-    <div class="navbar">
+    <nav>
       <ul id="menu">
         <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
         <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
       </ul>
-    </div>
+    </nav>
 
-    <div id="leftmenu">
+    <section id="leftmenu">
       <ul id="programmingmenulist">
         <li><a href="./">Back</a></li>
       </ul>
-    </div>
+    </section>
 
-    <div class="main">
-      <h1 class="title">fix buildbot multi-core compile not work issue</h1>
-      <div class="article_date">May 25 2017</div>
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">fix buildbot multi-core compile not work issue</h1>
+          <time datetime="2017-05-25">May 25 2017</time>
+        </header>
       <br/>
 
       <div id="table-of-contents">
@@ -153,11 +156,11 @@ $ buildbot reconfig master/
             Then the multi-core compile feature can be effective.</p>
         </div>
       </div>
+      </article>
 
-      <br/>
-      <div id="footer">
+      <footer>
         <p>&copy; MMXVII</p>
-      </div>
-    </div>
+      </footer>
+    </section>
   </body>
 </html>

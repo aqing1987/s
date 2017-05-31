@@ -8,28 +8,31 @@
     <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
   </head>
   <body>
-    <div id="banner">
+    <header class="top">
       <a href="/index.html">
         <img src="/images/s-logo.png" alt="s">
       </a>
-    </div>
+    </header>
 
-    <div class="navbar">
+    <nav>
       <ul id="menu">
         <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
         <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
       </ul>
-    </div>
+    </nav>
 
-    <div id="leftmenu">
+    <section id="leftmenu">
       <ul id="programmingmenulist">
         <li><a href="./">Back</a></li>
       </ul>
-    </div>
+    </section>
 
-    <div class="main">
-      <h1>compute code execute time</h1>
-      <div class="article_date">May 8 2017</div>
+    <section id="blog">
+      <article>
+      <header>
+        <h1 class="title">compute code execute time</h1>
+        <time datetime="2017-05-08">May 8 2017</time>
+      </header>
       <br/>
 
       <p><em>gettimeofday()</em> is the best API to compute code execute time current now. See the following sample:</p>
@@ -58,10 +61,11 @@
   <span style="color: #F92672;">return</span> 0;
 }
       </pre>
+      </article>
 
-      <div id="footer">
+      <footer>
         <p>&copy; MMXVII</p>
-      </div>
-    </div>
+      </footer>
+    </section>
   </body>
 </html>
