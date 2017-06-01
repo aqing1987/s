@@ -139,20 +139,23 @@ nav ul#menu a {
 }
 
 #programmingactive:link, #programmingactive:visited,
-#booklistactive:link, #booklistactive:visited {
+#booklistactive:link, #booklistactive:visited,
+#projectsactive:link, #projectsactive:visited {
   color: white;
   font-weight: bold;
   padding: 5px 20px;
 }
 
 #programming:link, #programming:visited,
-#booklist:link, #booklist:visited {
+#booklist:link, #booklist:visited,
+#projects:link, #projects:visited {
   font-weight: bold;
   color: #777;
 }
 
 #programming:hover, #programmingactive:hover,
-#booklist:hover, #booklistactive:hover {
+#booklist:hover, #booklistactive:hover,
+#projects:hover, #projectsactive:hover {
   background-color: #ddd
 }
 
@@ -198,7 +201,7 @@ section#leftmenu a {
   color: white;
 }
 
-#Xmenulist a:hover {
+#projectsmenulist a:hover {
   background: #92d800;
   color: white;
 }
@@ -227,7 +230,7 @@ section#leftmenu a {
   background: #0072ff;
 }
 
-#Xactive:link, #Xactive:visited {
+#projectsactive:link, #projectsactive:visited {
   background: #92d800;
 }
 
