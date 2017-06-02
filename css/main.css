@@ -103,10 +103,11 @@ header.top img {
 /* ===================================== */
 nav {
   position: absolute;
+  right: 10px;
+  left: 10px;
   top: 90px;
   border: 0;
   margin: 0;
-  width: 100%;
   padding: 0;
   background-color: #eee;
   background-color: #d7e9f6;
@@ -169,7 +170,7 @@ section#leftmenu ul {
   background: #eee;
   list-style-type: none;
   position: absolute;
-  left: 0px;
+  left: 10px;
   top: 145px;
   border-top: solid 1px #ccc;
   border-right: solid 1px #ccc;
@@ -274,6 +275,43 @@ section#leftmenu a {
 #subs li {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+/* sidebar                               */
+/* ===================================== */
+aside {
+  float: right;
+  width: 18em;
+  position: absolute;
+  top: 145px;
+  right: 10px;
+  border-top: solid 1px #ccc;
+  border-left: solid 1px #ccc;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  z-index: 1;
+}
+
+aside .box-title {
+  background: #d7e9f6;
+  padding: 2pt;
+  font-weight: bold;
+  color: #777;
+  display: list-item;
+  list-style-type: none;
+  list-style-position: inside;
+  margin: 0;
+  padding-left: 20px;
+  border-bottom: solid 1px #ccc;
+}
+
+aside ul li {
+  margin-bottom: 0.5em;
+}
+
+aside a:hover {
+  text-decoration: underline;
 }
 
 
