@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>linux</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="./">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">The Importance of Sync in Embedded</h1>
+          <time datetime="2017-06-02">Jun 2 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. My experience</a></li>
+              <li><a href="#sec-2">2. Solution</a></li>
+              <li><a href="#sec-3">3. Sync Info</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> My experience</h2>
+          <div class="outline-text-2" id="text-1">
+            <p>
+              I modified /etc/init.d/rcS in development board, but after I
+              restart the board, the modification disappear !!
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> Solution</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              Before reboot, use 
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">sync</span>
+              </pre>
+            </div>
+            <p>
+              especially for newly modified config files, e.g. rcS
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> Sync Info</h2>
+          <div class="outline-text-2" id="text-3">
+            <p>
+              Check the sync manual:
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">$ info coreutils <span style="color: #E6DB74;">'sync'</span>
+              </pre>
+            </div>
+
+            <div class="org-src-container">
+
+              <pre class="src src-info">14.4 `sync': Synchronize data on disk with memory
+=================================================
+
+`sync' writes any data buffered in memory out to disk.  This can
+include (but is not limited to) modified superblocks, modified inodes,
+and delayed reads and writes.  This must be implemented by the kernel;
+The `sync' program does nothing but exercise the `sync' system call.
+
+   The kernel keeps data in memory to avoid doing (relatively slow) disk
+reads and writes.  This improves performance, but if the computer
+crashes, data may be lost or the file system corrupted as a result.
+The `sync' command ensures everything in memory is written to disk.
+
+   Any arguments are ignored, except for a lone `--help' or `--version'
+(*note Common options::).
+
+   An exit status of zero indicates success, and a nonzero value
+indicates failure.
+              </pre>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
