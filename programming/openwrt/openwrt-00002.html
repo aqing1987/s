@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Openwrt</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="./">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Openwrt 15.05 add bluez support</h1>
+          <time datetime="2017-06-08">Jun 8 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. platform</a></li>
+              <li><a href="#sec-3">3. add bluez support</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. select necessary packages</a></li>
+                  <li><a href="#sec-3-2">3.2. compile &amp;&amp; upgrade</a></li>
+                  <li><a href="#sec-3-3">3.3. manually test bluetooth in board</a></li>
+                  <li><a href="#sec-3-4">3.4. troubleshoot issues</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <p>
+              <a href="https://wiki.openwrt.org/doc/howto/usb.bluetooth">https://wiki.openwrt.org/doc/howto/usb.bluetooth</a>
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> platform</h2>
+          <div class="outline-text-2" id="text-2">
+
+            <div class="figure">
+              <p><img src="./images/cpu-bt.png" alt="cpu-bt.png" />
+              </p>
+              <p><span class="figure-number">Figure 1:</span> Bluetooth Module in my board</p>
+            </div>
+
+            <p>
+              As shown above, bt module is connected to cpu via UART.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> add bluez support</h2>
+          <div class="outline-text-2" id="text-3">
+          </div><div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> select necessary packages</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <table border="1" cellspacing="0" cellpadding="5">
+
+
+                <colgroup>
+                  <col  class="left" />
+
+                  <col  class="left" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col" class="left">package</th>
+                    <th scope="col" class="left">description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="left">kmod-bluetooth</td>
+                    <td class="left">Kernel support for Bluetooth devices</td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <tr>
+                    <td class="left">bluez-libs</td>
+                    <td class="left">Bluetooth library.</td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <tr>
+                    <td class="left">bluez-utils</td>
+                    <td class="left">Bluetooth utilities.</td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <tr>
+                    <td class="left">dbus</td>
+                    <td class="left">Simple interprocess messaging system (daemon), dependency of bluez-utils</td>
+                  </tr>
+
+                </tbody>
+              </table>
+
+
+              <p>
+                before make, make sure the packages have been selected in <b>.config</b>
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-config">CONFIG_PACKAGE_bluez-libs=y
+CONFIG_PACKAGE_bluez-utils=y
+CONFIG_PACKAGE_dbus=y
+CONFIG_PACKAGE_libdbus=y
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-2" class="outline-3">
+            <h3 id="sec-3-2"><span class="section-number-3">3.2</span> compile &amp;&amp; upgrade</h3>
+            <div class="outline-text-3" id="text-3-2">
+              <p>
+                After compile, do upgrade
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-3" class="outline-3">
+            <h3 id="sec-3-3"><span class="section-number-3">3.3</span> manually test bluetooth in board</h3>
+            <div class="outline-text-3" id="text-3-3">
+              <p>
+                After login to the board:
+              </p>
+
+              <ul class="org-ul">
+                <li>attach serial devices via UART HCI to BlueZ stack
+                </li>
+              </ul>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">hciattach -n /dev/ttyHS0 bcsp 115200 &amp;
+                </pre>
+              </div>
+
+              <ul class="org-ul">
+                <li>print name and basic information about all the bluetooth devices
+                </li>
+              </ul>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">hciconfig
+
+hci0:   Type: BR/EDR  Bus: UART
+        BD Address: 00:02:5B:00:A5:A5  ACL MTU: 310:10  SCO MTU: 64:8
+        UP RUNNING PSCAN
+        RX bytes:3613 acl:0 sco:0 events:108 errors:0
+        TX bytes:4382 acl:0 sco:0 commands:113 errors:0
+                </pre>
+              </div>
+
+              <ul class="org-ul">
+                <li>activate a device
+                </li>
+              </ul>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">hciconfig hci0 up
+                </pre>
+              </div>
+
+              <ul class="org-ul">
+                <li>Display local devices
+                </li>
+              </ul>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">hcitool dev
+                </pre>
+              </div>
+
+              <ul class="org-ul">
+                <li>scan for remote devices
+                </li>
+              </ul>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">hcitool scan
+                </pre>
+              </div>
+            </div>
+          </div>
+          <div id="outline-container-sec-3-4" class="outline-3">
+            <h3 id="sec-3-4"><span class="section-number-3">3.4</span> troubleshoot issues</h3>
+            <div class="outline-text-3" id="text-3-4">
+              <p>
+                If bluetooth device doesn't initialize correctly and doesn't show up
+                while running <b>hcitool dev</b> command, try reinitializing bluetooth stack:
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-sh">hciconfig hci0 reset
+hciconfig
+hciconfig hci0 up
+/etc/init.d/bluetoothd restart
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>

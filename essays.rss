@@ -8,6 +8,11 @@
     <ttl>1800</ttl>
 
     <item>
+      <title>Openwrt 15.05 add bluez support</title>
+      <link>http://www.chenjingsi.com/programming/openwrt/openwrt-00002.html</link>
+      <pubDate>Jun 8 2017</pubDate>
+    </item>
+    <item>
       <title>python use netmiko for embedded ssh</title>
       <link>http://www.chenjingsi.com/programming/python/python-00002.html</link>
       <pubDate>Jun 6 2017</pubDate>
