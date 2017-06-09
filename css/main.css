@@ -157,7 +157,6 @@ nav ul#menu a {
 section#leftmenu {
   position: relative;
   float: left;
-  display: table-cell;
   vertical-align: top;
   width: 7%;
   margin: 20px 30px 0px 10px;
@@ -165,6 +164,7 @@ section#leftmenu {
 }
 
 section#leftmenu ul {
+  display: table-cell;
   text-align: right;
   font-weight: bold;
   background: #eee;
@@ -316,7 +316,8 @@ section#main, section#blog {
   position: relative;
   display: table-cell;
   padding: 15px;
-  margin-right: 288px;
+  margin-left: 7%;
+  margin-right: 15%;
   vertical-align: top;
 }
 
