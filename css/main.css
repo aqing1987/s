@@ -1,10 +1,9 @@
 /* Site-wide formatting of standard tags */
 /* ===================================== */
 body {
-  /*background: #fefefe;*/
   background: #f5f5d5;
   font-family: Verdana, Geneva, sans-serif, Arial;
-  /*font-size: .8em;*/
+  font-size: 80%;
   color: black;
   border: 0;
   margin: 0;
@@ -89,54 +88,45 @@ hr {
 /* ===================================== */
 
 header.top {
-  height: 47px;
+  height: 50px;
+  margin: 30px 10px 50px 10px;
 }
 
 header.top img {
-  position: absolute;
-  left: 10px;
-  top: 10px;
+  float: left;
   border: none;
 }
 
 /* navigation bar                        */
 /* ===================================== */
 nav {
-  position: absolute;
-  right: 10px;
-  left: 10px;
-  top: 90px;
   border: 0;
-  margin: 0;
+  margin: 10px 10px 10px 10px;
   padding: 0;
   background-color: #eee;
   background-color: #d7e9f6;
-  text-align: right;
+  text-align: center;
   border-top: solid 1px #ccc;
   border-bottom: solid 1px #ccc;
+  height: 38px;
 }
 
 nav ul#menu {
   list-style-type: none;
   padding: 0;
   margin: 0;
-  text-align: right;
 }
 
 nav ul#menu li {
-  display: inline;
-  padding: 0;
-  margin: 0;
-  text-align: right;
+  float: right;
 }
 
 nav ul#menu a {
-  float: right;
   display: block;
-  padding: 5px 20px;
-  margin: 0;
+  padding: 7px 15px 3px 15px;
   border-bottom: none;
   text-decoration: none;
+  height: 28px;
 }
 
 #programmingactive:link, #programmingactive:visited,
@@ -164,14 +154,21 @@ nav ul#menu a {
 /* Project specfic left-hand menus       */
 /* ===================================== */
 
+section#leftmenu {
+  position: relative;
+  float: left;
+  display: table-cell;
+  vertical-align: top;
+  width: 7%;
+  margin: 20px 30px 0px 10px;
+  z-index: 1;
+}
+
 section#leftmenu ul {
   text-align: right;
   font-weight: bold;
   background: #eee;
   list-style-type: none;
-  position: absolute;
-  left: 10px;
-  top: 145px;
   border-top: solid 1px #ccc;
   border-right: solid 1px #ccc;
   padding: 0;
@@ -280,30 +277,27 @@ section#leftmenu a {
 /* sidebar                               */
 /* ===================================== */
 aside {
-  float: right;
-  width: 18em;
   position: absolute;
-  top: 145px;
   right: 10px;
-  border-top: solid 1px #ccc;
+  width: 288px;
   border-left: solid 1px #ccc;
-  margin: 0;
-  padding: 0;
-  text-align: left;
+  margin: 20px 0px 0px 10px;
+  padding: 6px;
+  vertical-align: top;
   z-index: 1;
 }
 
+
 aside .box-title {
   background: #d7e9f6;
-  padding: 2pt;
-  font-weight: bold;
+  padding: 5px 5px 5px 20px;
   color: #777;
-  display: list-item;
-  list-style-type: none;
-  list-style-position: inside;
   margin: 0;
-  padding-left: 20px;
   border-bottom: solid 1px #ccc;
+}
+
+aside ul {
+  margin: 0;
 }
 
 aside ul li {
@@ -319,10 +313,11 @@ aside a:hover {
 /* ===================================== */
 
 section#main, section#blog {
-  position: absolute;
-  top: 140px;
-  left: 150px;
-  padding-right: 180px;
+  position: relative;
+  display: table-cell;
+  padding: 15px;
+  margin-right: 288px;
+  vertical-align: top;
 }
 
 section#main ul li {
