@@ -7,6 +7,7 @@ pre {
   margin: 1.2em;
   background: #3c3d37;
   color: #f7f7e2;
+  line-height: 1.3;
 }
 pre.src {
   position: relative;

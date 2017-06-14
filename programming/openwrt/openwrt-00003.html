@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Openwrt</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="./">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Write kernel module for openwrt15.05</h1>
+          <time datetime="2017-06-14">Jun 14 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. kernel module code structure</a></li>
+<li><a href="#sec-2">2. source code</a>
+<ul>
+<li><a href="#sec-2-1">2.1. hello/Makefile</a></li>
+<li><a href="#sec-2-2">2.2. hello/src/hello.c</a></li>
+<li><a href="#sec-2-3">2.3. hello/src/Kconfig</a></li>
+<li><a href="#sec-2-4">2.4. hello/src/Makefile</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. module select and compile</a>
+<ul>
+<li><a href="#sec-3-1">3.1. module select</a></li>
+<li><a href="#sec-3-2">3.2. module compile</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4. download the kernel module</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> kernel module code structure</h2>
+<div class="outline-text-2" id="text-1">
+<div class="org-src-container">
+
+<pre class="src src-tree">package/hello
+├── Makefile
+└── src
+    ├── hello.c
+    ├── Kconfig
+    └── Makefile
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> source code</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> hello/Makefile</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+
+<pre class="src src-makefile"><span style="color: #75715E;">#</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">Copyright (C) 2008 OpenWrt.org</span>
+<span style="color: #75715E;">#</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">This is free software, licensed under the GNU General Public License v2.</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">See /LICENSE for more information.</span>
+<span style="color: #75715E;">#</span>
+
+<span style="color: #F92672;">include</span> $(<span style="color: #FD971F;">TOPDIR</span>)/rules.mk
+<span style="color: #F92672;">include</span> $(<span style="color: #FD971F;">INCLUDE_DIR</span>)/kernel.mk
+
+<span style="color: #FD971F;">PKG_NAME</span>:=hello
+<span style="color: #FD971F;">PKG_RELEASE</span>:=1
+
+<span style="color: #F92672;">include</span> $(<span style="color: #FD971F;">INCLUDE_DIR</span>)/package.mk
+
+define KernelPackage/$(<span style="color: #FD971F;">PKG_NAME</span>)
+  <span style="color: #FD971F;">SUBMENU</span>:=Test Modules
+  <span style="color: #FD971F;">TITLE</span>:=hello driver
+  <span style="color: #FD971F;">FILES</span>:=$(<span style="color: #FD971F;">PKG_BUILD_DIR</span>)/*.$(<span style="color: #FD971F;">LINUX_KMOD_SUFFIX</span>)
+  <span style="color: #FD971F;">KCONFIG</span>:=
+endef
+
+define KernelPackage/$(<span style="color: #FD971F;">PKG_NAME</span>)/description
+  Kernel module hello
+endef
+
+<span style="color: #FD971F;">EXTRA_KCONFIG</span>:= \
+    <span style="color: #FD971F;">CONFIG_HELLO</span>=m
+
+<span style="color: #FD971F;">EXTRA_CFLAGS</span>:= \
+    $(<span style="color: #FD971F;">patsubst</span> CONFIG_%, -DCONFIG_%=1, $(<span style="color: #FD971F;">patsubst</span> %=m,%,$(<span style="color: #FD971F;">filter</span> %=m,$(<span style="color: #FD971F;">EXTRA_KCONFIG</span>)))) \
+    $(<span style="color: #FD971F;">patsubst</span> CONFIG_%, -DCONFIG_%=1, $(<span style="color: #FD971F;">patsubst</span> %=y,%,$(<span style="color: #FD971F;">filter</span> %=y,$(<span style="color: #FD971F;">EXTRA_KCONFIG</span>)))) \
+
+<span style="color: #FD971F;">MAKE_OPTS</span>:= \
+    <span style="color: #FD971F;">ARCH</span>=<span style="color: #E6DB74;">"$(</span><span style="color: #FD971F;">LINUX_KARCH</span><span style="color: #E6DB74;">)"</span> \
+    <span style="color: #FD971F;">CROSS_COMPILE</span>=<span style="color: #E6DB74;">"$(</span><span style="color: #FD971F;">TARGET_CROSS</span><span style="color: #E6DB74;">)"</span> \
+    <span style="color: #FD971F;">SUBDIRS</span>=<span style="color: #E6DB74;">"$(</span><span style="color: #FD971F;">PKG_BUILD_DIR</span><span style="color: #E6DB74;">)"</span> \
+    <span style="color: #FD971F;">EXTRA_CFLAGS</span>=<span style="color: #E6DB74;">"$(</span><span style="color: #FD971F;">EXTRA_CFLAGS</span><span style="color: #E6DB74;">)"</span> \
+    $(<span style="color: #FD971F;">EXTRA_KCONFIG</span>)
+
+define Build/Prepare
+    mkdir -p $(<span style="color: #FD971F;">PKG_BUILD_DIR</span>)
+    $(<span style="color: #FD971F;">CP</span>) ./src/* $(<span style="color: #FD971F;">PKG_BUILD_DIR</span>)/
+endef
+
+define Build/Compile
+    $(<span style="color: #FD971F;">MAKE</span>) -C <span style="color: #E6DB74;">"$(</span><span style="color: #FD971F;">LINUX_DIR</span><span style="color: #E6DB74;">)"</span> \
+    $(<span style="color: #FD971F;">MAKE_OPTS</span>) \
+    modules
+endef
+
+$(<span style="color: #FD971F;">eval</span> $(<span style="color: #FD971F;">call</span> KernelPackage,$(<span style="color: #FD971F;">PKG_NAME</span>)))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> hello/src/hello.c</h3>
+<div class="outline-text-3" id="text-2-2">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;linux/init.h&gt;</span>
+<span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;linux/module.h&gt;</span>
+<span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;linux/kernel.h&gt;</span>
+
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">__init</span> hello_init(<span style="color: #66D9EF;">void</span>)
+{
+  printk(<span style="color: #E6DB74;">"%s\n"</span>, __func__);
+  <span style="color: #F92672;">return</span> 0;
+}
+
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">__exit</span> hello_exit(<span style="color: #66D9EF;">void</span>)
+{
+  printk(<span style="color: #E6DB74;">"%s\n"</span>, __func__);
+}
+
+module_init(hello_init);
+module_exit(hello_exit);
+MODULE_LICENSE(<span style="color: #E6DB74;">"GPL"</span>);
+MODULE_AUTHOR(<span style="color: #E6DB74;">"Kevin"</span>);
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> hello/src/Kconfig</h3>
+<div class="outline-text-3" id="text-2-3">
+<div class="org-src-container">
+
+<pre class="src src-Kconfig">config HELLO
+　　tristate "Just a example"
+　　help
+　　　This is a example, for debugging kernel model.
+　　　If unsure, say N.
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> hello/src/Makefile</h3>
+<div class="outline-text-3" id="text-2-4">
+<div class="org-src-container">
+
+<pre class="src src-Makefile">obj-$(CONFIG_HELLO) += hello.o
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> module select and compile</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> module select</h3>
+<div class="outline-text-3" id="text-3-1">
+<div class="org-src-container">
+
+<pre class="src src-sh">$ make menuconfig
+
+Kernel modules ---&gt;
+  Test Modules ---&gt;
+    &lt;M&gt; kmod-hello
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> module compile</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+
+<pre class="src src-sh">make package/hello/{clean,prepare,compile,install} <span style="color: #FD971F;">V</span>=s
+</pre>
+</div>
+
+<p>
+the compiled module locates in:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">build_dir/target-arm_cortex-a7_uClibc-1.0.14_eabi/linux-ipq806x/hello/
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> download the kernel module</h2>
+<div class="outline-text-2" id="text-4">
+  <p>
+    <a href="./files/kernel-module-hello.tgz" target="_blank">kernel-module-hello.tgz</a>
+</p>
+</div>
+</div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>

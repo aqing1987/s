@@ -8,6 +8,11 @@
     <ttl>1800</ttl>
 
     <item>
+      <title>Write kernel module for openwrt15.05</title>
+      <link>http://www.chenjingsi.com/programming/openwrt/openwrt-00003.html</link>
+      <pubDate>Jun 14 2017</pubDate>
+    </item>
+    <item>
       <title>Openwrt 15.05 add bluez support</title>
       <link>http://www.chenjingsi.com/programming/openwrt/openwrt-00002.html</link>
       <pubDate>Jun 8 2017</pubDate>
