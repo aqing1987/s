@@ -8,6 +8,11 @@
     <ttl>1800</ttl>
 
     <item>
+      <title>Debug Openwrt Package</title>
+      <link>http://www.chenjingsi.com/programming/openwrt/openwrt-00005.html</link>
+      <pubDate>Jun 16 2017</pubDate>
+    </item>
+    <item>
       <title>ubuntu16.04 monitor openwrt syslog</title>
       <link>http://www.chenjingsi.com/programming/openwrt/openwrt-00004.html</link>
       <pubDate>Jun 16 2017</pubDate>
