@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Openwrt</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="./">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Quilt For Openwrt</h1>
+          <time datetime="2017-06-22">Jun 22 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. Reference</a></li>
+              <li><a href="#sec-2">2. Description</a></li>
+              <li><a href="#sec-3">3. Install quilt</a></li>
+              <li><a href="#sec-4">4. Adding a package patch</a>
+                <ul>
+                  <li><a href="#sec-4-1">4.1. prepare the source directory with `QUILT=1'</a></li>
+                  <li><a href="#sec-4-2">4.2. enter the package source directory</a></li>
+                  <li><a href="#sec-4-3">4.3. check all patches (not mandatory)</a></li>
+                  <li><a href="#sec-4-4">4.4. apply all patches</a></li>
+                  <li><a href="#sec-4-5">4.5. create a new, empty patch file</a></li>
+                  <li><a href="#sec-4-6">4.6. associate files with the new patch</a></li>
+                  <li><a href="#sec-4-7">4.7. check files associated with the new patch</a></li>
+                  <li><a href="#sec-4-8">4.8. do modification</a></li>
+                  <li><a href="#sec-4-9">4.9. review the modification</a></li>
+                  <li><a href="#sec-4-10">4.10. update the patch file with the changes made</a></li>
+                  <li><a href="#sec-4-11">4.11. change back to the toplevel directory</a></li>
+                  <li><a href="#sec-4-12">4.12. move the new patch file over to the buildroot</a></li>
+                  <li><a href="#sec-4-13">4.13. Finally rebuild the package to test the changes</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-5">5. Adding a kernel patch</a>
+                <ul>
+                  <li><a href="#sec-5-1">5.1. prepare the kernel tree</a></li>
+                  <li><a href="#sec-5-2">5.2. enter the kernel source directory</a></li>
+                  <li><a href="#sec-5-3">5.3. check all patches (not mandatory)</a></li>
+                  <li><a href="#sec-5-4">5.4. apply all patches</a></li>
+                  <li><a href="#sec-5-5">5.5. create a new, empty patch file</a></li>
+                  <li><a href="#sec-5-6">5.6. do modification</a></li>
+                  <li><a href="#sec-5-7">5.7. review the modification</a></li>
+                  <li><a href="#sec-5-8">5.8. update the patch file with the changes made</a></li>
+                  <li><a href="#sec-5-9">5.9. change back to the toplevel directory</a></li>
+                  <li><a href="#sec-5-10">5.10. move the new patch file over to the buildroot</a></li>
+                  <li><a href="#sec-5-11">5.11. verify whether our patch is applied or not</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-6">6. Edit an existing patch</a>
+                <ul>
+                  <li><a href="#sec-6-1">6.1. prepare the source directory</a></li>
+                  <li><a href="#sec-6-2">6.2. change to the prepared source directory</a></li>
+                  <li><a href="#sec-6-3">6.3. list the patches available</a></li>
+                  <li><a href="#sec-6-4">6.4. Advance to the patch that needs to be edited</a></li>
+                  <li><a href="#sec-6-5">6.5. edit the files included in the patch</a></li>
+                  <li><a href="#sec-6-6">6.6. review the changes</a></li>
+                  <li><a href="#sec-6-7">6.7. update the patch withe the changes</a></li>
+                  <li><a href="#sec-6-8">6.8. go back to the toplevel diretory of the buildroot</a></li>
+                  <li><a href="#sec-6-9">6.9. move the updated patch file over to the buildroot</a></li>
+                  <li><a href="#sec-6-10">6.10. Finally rebuild the package to test the changes</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> Reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li><a href="http://savannah.nongnu.org/projects/quilt">http://savannah.nongnu.org/projects/quilt</a>
+              </li>
+              <li><a href="https://wiki.openwrt.org/doc/devel/patches">https://wiki.openwrt.org/doc/devel/patches</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> Description</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              Quilt allows you to easily manage large numbers of patches by keeping
+              track of the changes each patch makes. <br />
+              Patches can be applied, un-applied, refreshed, and more.
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> Install quilt</h2>
+          <div class="outline-text-2" id="text-3">
+            <div class="org-src-container">
+
+              <pre class="src src-sh">audo apt-get install quilt
+              </pre>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> Adding a package patch</h2>
+          <div class="outline-text-2" id="text-4">
+          </div><div id="outline-container-sec-4-1" class="outline-3">
+            <h3 id="sec-4-1"><span class="section-number-3">4.1</span> prepare the source directory with `QUILT=1'</h3>
+            <div class="outline-text-3" id="text-4-1">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make package/example/{clean,prepare} <span style="color: #FD971F;">V</span>=s <span style="color: #FD971F;">QUILT</span>=1
+                </pre>
+              </div>
+
+              <p>
+                For host-side packages, use:
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make package/example/host/{clean,prepare} <span style="color: #FD971F;">V</span>=s <span style="color: #FD971F;">QUILT</span>=1
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-2" class="outline-3">
+            <h3 id="sec-4-2"><span class="section-number-3">4.2</span> enter the package source directory</h3>
+            <div class="outline-text-3" id="text-4-2">
+              <div class="org-src-container">
+
+                <pre class="src src-sh"><span style="color: #F92672;">cd</span> build_dir/target-*/example-*
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-3" class="outline-3">
+            <h3 id="sec-4-3"><span class="section-number-3">4.3</span> check all patches (not mandatory)</h3>
+            <div class="outline-text-3" id="text-4-3">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt series
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-4" class="outline-3">
+            <h3 id="sec-4-4"><span class="section-number-3">4.4</span> apply all patches</h3>
+            <div class="outline-text-3" id="text-4-4">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt push -a
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-5" class="outline-3">
+            <h3 id="sec-4-5"><span class="section-number-3">4.5</span> create a new, empty patch file</h3>
+            <div class="outline-text-3" id="text-4-5">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt new 000-abc.patch
+                </pre>
+              </div>
+
+              <ul class="org-ul">
+                <li>The name should start with a number, followed by a hyphen and a very short
+                  description of what is changed
+                </li>
+                <li>The chosen number should be higher than any existing patch - use quilt
+                  series to see the list of patches
+                </li>
+              </ul>
+            </div>
+          </div>
+
+
+          <div id="outline-container-sec-4-6" class="outline-3">
+            <h3 id="sec-4-6"><span class="section-number-3">4.6</span> associate files with the new patch</h3>
+            <div class="outline-text-3" id="text-4-6">
+              <div class="org-src-container">
+
+                <pre class="src src-logic">while (not finished) {
+    quilt add file
+}
+                </pre>
+              </div>
+
+              <p>
+                Repeat that for any file that needs to be modified.
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-7" class="outline-3">
+            <h3 id="sec-4-7"><span class="section-number-3">4.7</span> check files associated with the new patch</h3>
+            <div class="outline-text-3" id="text-4-7">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt files
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-8" class="outline-3">
+            <h3 id="sec-4-8"><span class="section-number-3">4.8</span> do modification</h3>
+            <div class="outline-text-3" id="text-4-8">
+              <p>
+                Do modification to the added files of the patch
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-9" class="outline-3">
+            <h3 id="sec-4-9"><span class="section-number-3">4.9</span> review the modification</h3>
+            <div class="outline-text-3" id="text-4-9">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt diff
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-10" class="outline-3">
+            <h3 id="sec-4-10"><span class="section-number-3">4.10</span> update the patch file with the changes made</h3>
+            <div class="outline-text-3" id="text-4-10">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt refresh
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-11" class="outline-3">
+            <h3 id="sec-4-11"><span class="section-number-3">4.11</span> change back to the toplevel directory</h3>
+            <div class="outline-text-3" id="text-4-11">
+              <div class="org-src-container">
+
+                <pre class="src src-sh"><span style="color: #F92672;">cd</span> ../../../
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-12" class="outline-3">
+            <h3 id="sec-4-12"><span class="section-number-3">4.12</span> move the new patch file over to the buildroot</h3>
+            <div class="outline-text-3" id="text-4-12">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make package/example/update <span style="color: #FD971F;">V</span>=s
+                </pre>
+              </div>
+
+              <p>
+                The generated patch located in:
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">build_dir/target-*/example-*/patches/000-abc.patch
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-13" class="outline-3">
+            <h3 id="sec-4-13"><span class="section-number-3">4.13</span> Finally rebuild the package to test the changes</h3>
+            <div class="outline-text-3" id="text-4-13">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make package/example/{clean,compile} package/index <span style="color: #FD971F;">V</span>=s
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-5" class="outline-2">
+          <h2 id="sec-5"><span class="section-number-2">5</span> Adding a kernel patch</h2>
+          <div class="outline-text-2" id="text-5">
+            <p>
+              The process for modifying kernel patches is the same as for packages,
+              only the make targets and directories differ.
+            </p>
+          </div>
+
+          <div id="outline-container-sec-5-1" class="outline-3">
+            <h3 id="sec-5-1"><span class="section-number-3">5.1</span> prepare the kernel tree</h3>
+            <div class="outline-text-3" id="text-5-1">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make target/linux/{clean,prepare} <span style="color: #FD971F;">V</span>=s <span style="color: #FD971F;">QUILT</span>=1
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-2" class="outline-3">
+            <h3 id="sec-5-2"><span class="section-number-3">5.2</span> enter the kernel source directory</h3>
+            <div class="outline-text-3" id="text-5-2">
+              <div class="org-src-container">
+
+                <pre class="src src-sh"><span style="color: #F92672;">cd</span> build_dir/target-*/linux-*/linux-3.*
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-3" class="outline-3">
+            <h3 id="sec-5-3"><span class="section-number-3">5.3</span> check all patches (not mandatory)</h3>
+            <div class="outline-text-3" id="text-5-3">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt series
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-4" class="outline-3">
+            <h3 id="sec-5-4"><span class="section-number-3">5.4</span> apply all patches</h3>
+            <div class="outline-text-3" id="text-5-4">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt push -a
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-5" class="outline-3">
+            <h3 id="sec-5-5"><span class="section-number-3">5.5</span> create a new, empty patch file</h3>
+            <div class="outline-text-3" id="text-5-5">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt new platform/000-abc.patch
+                </pre>
+              </div>
+
+              <p>
+                Note: for the kernel, an additional subdirectory for patches is used,
+                <b>generic/</b> contains <br />patches common to all architectures, and <b>platform/</b>
+                contains patches specific to the current target.
+              </p>
+
+              <p>
+                Patches should be named with the correct prefix, platform/000-abc.patch
+                or generic/000-abc.patch. <br />If not, the update may not work correctly.
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-6" class="outline-3">
+            <h3 id="sec-5-6"><span class="section-number-3">5.6</span> do modification</h3>
+            <div class="outline-text-3" id="text-5-6">
+              <p>
+                Do modification to the added files of the patch
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-7" class="outline-3">
+            <h3 id="sec-5-7"><span class="section-number-3">5.7</span> review the modification</h3>
+            <div class="outline-text-3" id="text-5-7">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt diff
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-8" class="outline-3">
+            <h3 id="sec-5-8"><span class="section-number-3">5.8</span> update the patch file with the changes made</h3>
+            <div class="outline-text-3" id="text-5-8">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt refresh
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-9" class="outline-3">
+            <h3 id="sec-5-9"><span class="section-number-3">5.9</span> change back to the toplevel directory</h3>
+            <div class="outline-text-3" id="text-5-9">
+              <div class="org-src-container">
+
+                <pre class="src src-sh"><span style="color: #F92672;">cd</span> ../../../../
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-10" class="outline-3">
+            <h3 id="sec-5-10"><span class="section-number-3">5.10</span> move the new patch file over to the buildroot</h3>
+            <div class="outline-text-3" id="text-5-10">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make target/linux/update <span style="color: #FD971F;">V</span>=s
+                </pre>
+              </div>
+
+              <p>
+                The generated patch located in:
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">build_dir/target-*/linux-*/linux-3.*/patches/generic
+                </pre>
+              </div>
+              <p>
+                or:
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">build_dir/target-*/linux-*/linux-3.*/patches/platform
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-11" class="outline-3">
+            <h3 id="sec-5-11"><span class="section-number-3">5.11</span> verify whether our patch is applied or not</h3>
+            <div class="outline-text-3" id="text-5-11">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make target/linux/{clean,prepare} <span style="color: #FD971F;">V</span>=s <span style="color: #FD971F;">QUILT</span>=1
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-6" class="outline-2">
+          <h2 id="sec-6"><span class="section-number-2">6</span> Edit an existing patch</h2>
+          <div class="outline-text-2" id="text-6">
+          </div><div id="outline-container-sec-6-1" class="outline-3">
+            <h3 id="sec-6-1"><span class="section-number-3">6.1</span> prepare the source directory</h3>
+            <div class="outline-text-3" id="text-6-1">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make package/example/{clean,prepare} <span style="color: #FD971F;">V</span>=s <span style="color: #FD971F;">QUILT</span>=1
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-2" class="outline-3">
+            <h3 id="sec-6-2"><span class="section-number-3">6.2</span> change to the prepared source directory</h3>
+            <div class="outline-text-3" id="text-6-2">
+              <div class="org-src-container">
+
+                <pre class="src src-sh"><span style="color: #F92672;">cd</span> build_dir/target-*/example-*
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-3" class="outline-3">
+            <h3 id="sec-6-3"><span class="section-number-3">6.3</span> list the patches available</h3>
+            <div class="outline-text-3" id="text-6-3">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt series
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-4" class="outline-3">
+            <h3 id="sec-6-4"><span class="section-number-3">6.4</span> Advance to the patch that needs to be edited</h3>
+            <div class="outline-text-3" id="text-6-4">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt push 010-main_code_fix.patch
+                </pre>
+              </div>
+
+              <ul class="org-ul">
+                <li>When passing a valid patch filename to push, quilt will only apply
+                  the series until it reaches the specified patch
+                </li>
+                <li>If unsure, use `quilt series' to see existing patches and `quilt top' to
+                  see the current position
+                </li>
+                <li>If the current position is beyound the desired patch, use `quilt pop' to
+                  remove patches in the reverse order
+                </li>
+                <li>You can use the "force" push option to interactively apply a broken patch
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-5" class="outline-3">
+            <h3 id="sec-6-5"><span class="section-number-3">6.5</span> edit the files included in the patch</h3>
+            <div class="outline-text-3" id="text-6-5">
+              <p>
+                first check which files are included in the patch
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt files
+                </pre>
+              </div>
+
+              <p>
+                then modify it.
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-6" class="outline-3">
+            <h3 id="sec-6-6"><span class="section-number-3">6.6</span> review the changes</h3>
+            <div class="outline-text-3" id="text-6-6">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt diff
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-7" class="outline-3">
+            <h3 id="sec-6-7"><span class="section-number-3">6.7</span> update the patch withe the changes</h3>
+            <div class="outline-text-3" id="text-6-7">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">quilt refresh
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-8" class="outline-3">
+            <h3 id="sec-6-8"><span class="section-number-3">6.8</span> go back to the toplevel diretory of the buildroot</h3>
+            <div class="outline-text-3" id="text-6-8">
+              <div class="org-src-container">
+
+                <pre class="src src-sh"><span style="color: #F92672;">cd</span> ../../../
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-9" class="outline-3">
+            <h3 id="sec-6-9"><span class="section-number-3">6.9</span> move the updated patch file over to the buildroot</h3>
+            <div class="outline-text-3" id="text-6-9">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make package/example/update <span style="color: #FD971F;">V</span>=s
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-10" class="outline-3">
+            <h3 id="sec-6-10"><span class="section-number-3">6.10</span> Finally rebuild the package to test the changes</h3>
+            <div class="outline-text-3" id="text-6-10">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">make package/example/{clean,compile} <span style="color: #FD971F;">V</span>=s
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
