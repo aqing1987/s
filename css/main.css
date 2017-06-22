@@ -372,3 +372,31 @@ time {
   font-size: .8em;
   font-style: italic;
 }
+
+/* Boxes                                 */
+/* ===================================== */
+.box {
+  width: 98%;
+  margin-left: 1%;
+  margin-right: 1%;
+}
+
+.boxtitle  {
+  background-image: url("../images/Savannah.theme/leopard.png");
+  background-color: #eddb5a;
+  border: thin outset #641212;
+  color: #000000;
+}
+
+.boxitem  {
+  background-color: #fffbed;
+  border-left: thin dotted #e0c080;
+  border-right: thin dotted #e0c080;
+  border-bottom: thin dotted #e0c080;
+  color: #333333;
+  padding: 1%;
+}
+
+.boxitem a { text-decoration: none; color: #641212;}
+.boxitem a:hover { text-decoration: underline; color: #c40f0f; }
+.boxitem a:active { color: #ff0000; }
