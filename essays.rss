@@ -8,6 +8,11 @@
     <ttl>1800</ttl>
 
     <item>
+      <title>Org mode set table of contents level</title>
+      <link>http://www.chenjingsi.com/programming/emacs/emacs-00005.html</link>
+      <pubDate>Jun 29 2017</pubDate>
+    </item>
+    <item>
       <title>Org mode preserve line breaks when export</title>
       <link>http://www.chenjingsi.com/programming/emacs/emacs-00004.html</link>
       <pubDate>Jun 29 2017</pubDate>
