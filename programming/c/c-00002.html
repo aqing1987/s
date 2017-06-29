@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>C</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="./">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">The Causes for Segmentation Fault</h1>
+          <time datetime="2017-06-29">Jun 29 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. Overview</a></li>
+              <li><a href="#sec-3">3. Causes</a></li>
+              <li><a href="#sec-4">4. examples</a>
+                <ul>
+                  <li><a href="#sec-4-1">4.1. uninitialized pointer dereference</a></li>
+                  <li><a href="#sec-4-2">4.2. null pointer dereference</a></li>
+                  <li><a href="#sec-4-3">4.3. Writing to read-only memory</a></li>
+                  <li><a href="#sec-4-4">4.4. Buffer overflow</a></li>
+                  <li><a href="#sec-4-5">4.5. Stack overflow</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li><a href="https://en.wikipedia.org/wiki/Segmentation_fault">https://en.wikipedia.org/wiki/Segmentation_fault</a><br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> Overview</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              A segmentation fault occurs when a program attempts to access a memory<br  />
+              location that it is not allowed to access, or attempts to access a memory<br  />
+              location in a way that is not allowed (for example, attempting to write to<br  />
+              read-only location, or to overwrite part of the operating system).<br  />
+            </p>
+
+            <p>
+              At the hardware level, the fault is initially raised by the memory management<br  />
+              unit (MMU) on illegal access (if the referenced memory exists), as part of its<br  />
+              memory protection feature, or an invalid page fault (if the referenced<br  />
+              memory does not exist). If the problem is not an invalid logical address but<br  />
+              instead an invalid physical address, a bus error is raised instead.<br  />
+            </p>
+
+            <p>
+              At the operating system level, this fault is caught and a signal is passed<br  />
+              on to the offending process, activating the process's handler for that signal.<br  />
+              Different operating systems have different signal names to indicate that a<br  />
+              segmentation fault has occurred. On Unix-like operating system, a signal called<br  />
+              SIGSEGV (abbreviated from segmentation violation) is sent to the offending<br  />
+              process.<br  />
+            </p>
+
+            <p>
+              The default action for s segmentation fault or bus error is abnormal<br  />
+              termination of the process that triggered it. A core file may be generated to<br  />
+              aid debugging, and other platform-dependent actions may also be performed.<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> Causes</h2>
+          <div class="outline-text-2" id="text-3">
+            <p>
+              The conditions under which segmentation violations occur and how they manifest<br  />
+              themselves are specific to hardware and the operating system: different<br  />
+              hardware raises different faults for given conditions, and different operating<br  />
+              systems convert these to different signals that are passed on to processes.<br  />
+              The proximate cause is a memory violation, while the underlying cause is<br  />
+              generally a software bug of some sort. Determing the root cause - debugging<br  />
+              the bug - can be simple in some cases, where the program will consistently<br  />
+              cause a segmentation fault(e.g., dereferencing a null pointer), while in other<br  />
+              cases the bug can be difficult to reproduce and depend on memory allocation<br  />
+              on each run (e.g., deferencing a dangling pointer).<br  />
+            </p>
+
+            <p>
+              The following are some typical causes of a segmentation fault:<br  />
+            </p>
+            <ul class="org-ul">
+              <li>Deferencing null pointers<br  />
+                (this is special-caused by memory management hardware)<br  />
+              </li>
+              <li>Attempting to access a nonexistent memory address<br  />
+                (outside process's address space)<br  />
+              </li>
+              <li>Attempting to access memory the program does not have rights to<br  />
+                (such as kernel structures in process context)<br  />
+              </li>
+              <li>Attempting to write read-only memory(such as code segment)<br  />
+              </li>
+            </ul>
+
+            <p>
+              These in turn are often caused by programming errors that result in invalid<br  />
+              memory access:<br  />
+            </p>
+            <ul class="org-ul">
+              <li>Deferencing or assigning to an uninitialized pointer<br  />
+                (wild pointer, which points to a random memory address)<br  />
+              </li>
+              <li>Deferencing or assigning to a freed pointer<br  />
+                (dangling pointer, which points to memory that has been freed/deallocated<br  />
+                /deleted)<br  />
+              </li>
+              <li>A buffer overflow<br  />
+              </li>
+              <li>A stack overflow<br  />
+              </li>
+              <li>Attempting to execute a program that does not compile correctly<br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> examples</h2>
+          <div class="outline-text-2" id="text-4">
+            <p>
+              In C code, segmentation faults most often occur because of errors in pointer<br  />
+              use, particularly in C dynamic memory allocation. Deferencing a null pointer<br  />
+              will always result in a segmentation fault, but wild pointers and dangling<br  />
+              pointers point to memory that may or may not exist, and may or may not be<br  />
+              readable or writable, and thus can result in transient bugs. For example:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-c"><span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">p1</span> = <span style="color: #AE81FF;">NULL</span>;           <span style="color: #75715E;">// </span><span style="color: #75715E;">Null pointer</span>
+<span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">p2</span>;                  <span style="color: #75715E;">// </span><span style="color: #75715E;">Wild pointer: not initialized at all.</span>
+<span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">p3</span>  = malloc(10 * <span style="color: #F92672;">sizeof</span>(<span style="color: #66D9EF;">char</span>));  <span style="color: #75715E;">// </span><span style="color: #75715E;">Initialized pointer to allocated memory</span>
+                           <span style="color: #75715E;">// </span><span style="color: #75715E;">(assuming malloc did not fail)</span>
+free(p3);                  <span style="color: #75715E;">// </span><span style="color: #75715E;">p3 is now a dangling pointer, as memory has been freed</span>
+              </pre>
+            </div>
+
+            <p>
+              Now, deferencing any of these variables could cause a segmentation fault:<br  />
+              deferencing the null pointer generally will cause a segfault, while reading<br  />
+              from the wild pointer may instead result in random data but no segfault, and<br  />
+              reading from the dangling pointer may result in valid data for a while, and<br  />
+              then random data as it is overwritten.<br  />
+            </p>
+          </div>
+
+          <div id="outline-container-sec-4-1" class="outline-3">
+            <h3 id="sec-4-1"><span class="section-number-3">4.1</span> uninitialized pointer dereference</h3>
+            <div class="outline-text-3" id="text-4-1">
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">p</span>;
+p[0] = <span style="color: #E6DB74;">'a'</span>;
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-2" class="outline-3">
+            <h3 id="sec-4-2"><span class="section-number-3">4.2</span> null pointer dereference</h3>
+            <div class="outline-text-3" id="text-4-2">
+              <p>
+                Because a very common program error is a null pointer dereference(a read or<br  />
+                write through a null pointer, used in C to mean "pointer to no object" and<br  />
+                as an error indicator), most operating systems map the null pointer's address<br  />
+                such that accessing it causes a segmentation fault.<br  />
+              </p>
+
+              <p>
+                create a null pointer, and then tries to access its value (read the value).<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">int</span> *<span style="color: #FD971F;">ptr</span> = <span style="color: #AE81FF;">NULL</span>;
+printf(<span style="color: #E6DB74;">"%d"</span>, *ptr);
+                </pre>
+              </div>
+
+              <p>
+                dereferencing a null pointer and then assigning to it (writing a value to<br  />
+                a non-existent target)<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">int</span> *<span style="color: #FD971F;">ptr</span> = <span style="color: #AE81FF;">NULL</span>;
+*ptr = 1;
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-3" class="outline-3">
+            <h3 id="sec-4-3"><span class="section-number-3">4.3</span> Writing to read-only memory</h3>
+            <div class="outline-text-3" id="text-4-3">
+              <p>
+                The occurs when the program writes to part of its own code segment or the<br  />
+                read-only portion of the data segment, as these are loaded by the OS into<br  />
+                read-only memory.<br  />
+              </p>
+
+              <p>
+                The string "hello world" is placed in the rodata section of the program<br  />
+                executable file: the read-only section of the data segment. When loaded, the<br  />
+                operating system places it with other strings and constant data in a read-only<br  />
+                segment of memory. When executed, a variable, s, is set to point to the<br  />
+                string's location, and an attempt is made to write an H character through the<br  />
+                variable into the memory, cauing a segmentation fault.<br  />
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">char</span> *<span style="color: #FD971F;">s</span> = <span style="color: #E6DB74;">"hello world"</span>;
+*s = <span style="color: #E6DB74;">'H'</span>;
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-4" class="outline-3">
+            <h3 id="sec-4-4"><span class="section-number-3">4.4</span> Buffer overflow</h3>
+            <div class="outline-text-3" id="text-4-4">
+              <p>
+                In computer security and programming, a buffer overflow, or buffer overrun,<br  />
+                is an anomaly where a program, while writing data to a buffer, overruns the<br  />
+                buffer's boundary and overwrites adjacent memory locations.<br  />
+              </p>
+
+              <p>
+                A buffer overflow occurs when data written to a buffer also corrupts data<br  />
+                values in memory addresses adjacent to the destination buffer due to<br  />
+                insufficient bounds checking. This can occur when copying data from one buffer<br  />
+                to another without first checking that the data fits within the destination<br  />
+                buffer.<br  />
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">A</span>[8] = <span style="color: #E6DB74;">""</span>;
+<span style="color: #66D9EF;">unsigned</span> <span style="color: #66D9EF;">short</span> <span style="color: #FD971F;">B</span> = 1979;
+
+<span style="color: #75715E;">// </span><span style="color: #75715E;">"excessive" is 9 characters long and encodes to 10 bytes</span>
+<span style="color: #75715E;">// </span><span style="color: #75715E;">including the null terminator, but A can take only 8 bytes.</span>
+<span style="color: #75715E;">// </span><span style="color: #75715E;">By failing to check the length of the string, it also overwrites</span>
+<span style="color: #75715E;">// </span><span style="color: #75715E;">the value of B.</span>
+strcpy(A, <span style="color: #E6DB74;">"excessive"</span>);
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-5" class="outline-3">
+            <h3 id="sec-4-5"><span class="section-number-3">4.5</span> Stack overflow</h3>
+            <div class="outline-text-3" id="text-4-5">
+              <p>
+                In software, a stack overflow occurs if the call stack pointer exceeds the<br  />
+                stack bound. The most common cause of stack overflow is excessively deep or<br  />
+                infinite recursion.<br  />
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">foo</span>() {
+  <span style="color: #F92672;">return</span> foo();
+}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
