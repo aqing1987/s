@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Openwrt</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="./">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Shell `local' leads to memory leak</h1>
+          <time datetime="2017-07-06">Jul 6 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. description</a></li>
+<li><a href="#sec-2">2. test</a>
+<ul>
+<li><a href="#sec-2-1">2.1. test with <b>local</b></a></li>
+<li><a href="#sec-2-2">2.2. test without local</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. reason</a></li>
+<li><a href="#sec-4">4. fix</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> description</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+When I analysis a shell script in Openwrt which leads to memory leak.<br  />
+I found that the <b>local</b> command made it happen.<br  />
+</p>
+
+<p>
+shell version:<br  />
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">root@AP-1A:B0:~# /bin/sh --version
+
+BusyBox v1.23.2 (2017-06-09 06:54:32 CST) built-in shell (ash)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> test</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> test with <b>local</b></h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The test script as below:<br  />
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">!/bin/</span><span style="color: #F92672;">sh</span>
+
+<span style="color: #F92672;">while</span> [ <span style="color: #E6DB74;">"1"</span>=<span style="color: #E6DB74;">"1"</span> ]
+<span style="color: #F92672;">do</span>
+    <span style="color: #F92672;">local</span> <span style="color: #FD971F;">len</span>=1
+<span style="color: #F92672;">done</span>
+</pre>
+</div>
+
+<p>
+test steps:<br  />
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">root@AP-1A:B0:~# ./bb.sh &amp;
+
+root@AP-1A:B0:~# ps | grep bb.sh
+29434 root     10428 R    {bb.sh} /bin/sh ./bb.sh
+29620 root      1348 S    grep bb.sh
+
+root@AP-1A:B0:~# ps | grep bb.sh
+29434 root     16660 R    {bb.sh} /bin/sh ./bb.sh
+29690 root      1348 S    grep bb.sh
+</pre>
+</div>
+
+<p>
+As we can see, the VmSize increase rapidly.<br  />
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> test without local</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+The test script as below:<br  />
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #75715E;">#</span><span style="color: #75715E;">!/bin/</span><span style="color: #F92672;">sh</span>
+
+<span style="color: #F92672;">while</span> [ <span style="color: #E6DB74;">"1"</span>=<span style="color: #E6DB74;">"1"</span> ]
+<span style="color: #F92672;">do</span>
+    <span style="color: #FD971F;">len</span>=1
+<span style="color: #F92672;">done</span>
+</pre>
+</div>
+
+<p>
+test steps:<br  />
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">root@AP-1A:B0:~# ./bb.sh &amp;
+root@AP-1A:B0:~# ps | grep bb.sh
+32170 root      1352 R    {bb.sh} /bin/sh ./bb.sh
+32204 root      1348 S    grep bb.sh
+root@AP-1A:B0:~# ps | grep bb.sh
+32170 root      1352 R    {bb.sh} /bin/sh ./bb.sh
+32233 root      1348 S    grep bb.sh
+</pre>
+</div>
+
+<p>
+As we can see the VmSize stay the same.<br  />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> reason</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+I got the definiton from GNU bash handbook:<br  />
+</p>
+<div class="org-src-container">
+
+<pre class="src src-log">local
+   local [option] name[=value] ...
+For each argument, a local variable named name is created, and assigned value.
+The option can be any of the options accepted by declare. <font color="red">local can only
+be used within a function</font>; it makes the variable name have a visible scope
+restricted to that function and its children. The return status is zero unless
+local is used outside a function, an invalid name is supplied, or name is a
+readonly variable.
+</pre>
+</div>
+
+<p>
+So the reason is that the undefined behavior of <b>local</b> used in <b>while</b> (not<br  />
+in a function) leads to memory leak issue.<br  />
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> fix</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+remove the <b>local</b> command.</p>
+</div>
+</div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>

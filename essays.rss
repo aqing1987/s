@@ -8,6 +8,11 @@
     <ttl>1800</ttl>
 
     <item>
+      <title>Shell `local' leads to memory leak</title>
+      <link>http://www.chenjingsi.com/programming/openwrt/openwrt-00009.html</link>
+      <pubDate>Jul 6 2017</pubDate>
+    </item>
+    <item>
       <title>Openwrt no debugging symbols found</title>
       <link>http://www.chenjingsi.com/programming/openwrt/openwrt-00008.html</link>
       <pubDate>Jun 29 2017</pubDate>
