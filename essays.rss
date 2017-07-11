@@ -8,6 +8,11 @@
     <ttl>1800</ttl>
 
     <item>
+      <title>The Code Leads to VmSize Increase</title>
+      <link>http://www.chenjingsi.com/programming/c/c-00003.html</link>
+      <pubDate>Jul 11 2017</pubDate>
+    </item>
+    <item>
       <title>Shell `local' leads to memory leak</title>
       <link>http://www.chenjingsi.com/programming/openwrt/openwrt-00009.html</link>
       <pubDate>Jul 6 2017</pubDate>
