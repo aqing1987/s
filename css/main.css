@@ -325,6 +325,20 @@ section#main ul li {
   margin-top: 5px;
 }
 
+.posts {
+  list-style-type: none;
+  margin-bottom: 2em;
+}
+
+.posts li {
+  line-height: 1.35em;
+}
+.posts span {
+  color: #aaa;
+  font-family: Monaco, "Courier New", monospace;
+  font-size: 80%;
+}
+
 footer {
   border-top: 1px solid #ccc;
   margin-top: 39px;
