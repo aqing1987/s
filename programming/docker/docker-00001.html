@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Docker</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Use docker to build openwrt aa</h1>
+          <time datetime="2017-09-08">Sep 8 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. Prepare docker project</a>
+                <ul>
+                  <li><a href="#sec-1-1">1.1. Create empty directory <b>pineapple-proj</b></a></li>
+                  <li><a href="#sec-1-2">1.2. Put <b>Dockerfile</b> and <b>sources.list</b> to pineapple-proj</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-2">2. Build the Dockerfile and tag the Image as ubu12-pineapple</a></li>
+              <li><a href="#sec-3">3. Create container with docker run</a></li>
+              <li><a href="#sec-4">4. Start container with docker start</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> Prepare docker project</h2>
+          <div class="outline-text-2" id="text-1">
+          </div><div id="outline-container-sec-1-1" class="outline-3">
+            <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Create empty directory <b>pineapple-proj</b></h3>
+            <div class="outline-text-3" id="text-1-1">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">mkdir pineapple-proj
+<span style="color: #F92672;">cd</span> pineaple-proj
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-1-2" class="outline-3">
+            <h3 id="sec-1-2"><span class="section-number-3">1.2</span> Put <b>Dockerfile</b> and <b>sources.list</b> to pineapple-proj</h3>
+            <div class="outline-text-3" id="text-1-2">
+            </div><div id="outline-container-sec-1-2-1" class="outline-4">
+              <h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> Dockerfile content</h4>
+              <div class="outline-text-4" id="text-1-2-1">
+                <div class="org-src-container">
+
+                  <pre class="src src-Dockerfile">FROM ubuntu:12.04
+
+# aliyun mirrors in China
+COPY sources.list /etc/apt/
+
+ENV TERM=xterm-256color
+
+RUN apt-get update \
+    &amp;&amp; apt-get install -y gcc g++ binutils patch bzip2 flex bison make \
+       autoconf gettext texinfo unzip sharutils subversion ncurses-term \
+       zlib1g-dev gawk asciidoc git-core build-essential libssl-dev \
+       mercurial libncurses5-dev vim wget \
+    &amp;&amp; apt-get clean \
+    &amp;&amp; groupadd -g 1000 xyz \
+    &amp;&amp; useradd -u 1000 -g 1000 -G sudo -m xyz \
+    &amp;&amp; mkdir /home/xyz/pineapple \
+    &amp;&amp; chown xyz:xyz /home/xyz/pineapple \
+    &amp;&amp; echo "root:123" | chpasswd \
+    &amp;&amp; chsh -s /bin/bash xyz
+
+USER xyz
+WORKDIR /home/xyz
+ENV TERM=xterm-256color
+
+MAINTAINER Kevin Chen
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-1-2-2" class="outline-4">
+              <h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> aliyun apt sources.list</h4>
+              <div class="outline-text-4" id="text-1-2-2">
+                <div class="org-src-container">
+
+                  <pre class="src src-sources.list">deb http://mirrors.aliyun.com/ubuntu/ precise main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ precise-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ precise-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ precise-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ precise-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ precise-backports main restricted universe multiverse
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> Build the Dockerfile and tag the Image as ubu12-pineapple</h2>
+          <div class="outline-text-2" id="text-2">
+            <div class="org-src-container">
+
+              <pre class="src src-sh">sudo docker build -t ubu12-pineapple .
+              </pre>
+            </div>
+
+            <p>
+              after the operation, check the images:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">&#10140;  pineapple-proj sudo docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubu12-pineapple     latest              b39a342214ce        4 minutes ago       1.12GB
+ubuntu              12.04               5b117edd0b76        4 months ago        104MB
+              </pre>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> Create container with docker run</h2>
+          <div class="outline-text-2" id="text-3">
+            <div class="org-src-container">
+
+              <pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">-t : allocate a pseudo-tty</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">-i : keep STDIN open even if not attached</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">--name : assign a name to the container</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">-v : create a bind mount, if you specify, -v /HOST-DIR:/CONTAINER-DIR</span>
+
+sudo docker run -it --name c-pineapple -v ~/workspace/moon/pineapple-git/sdk_aa/:/home/xyz/pineapple ubu12-pineapple
+              </pre>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> Start container with docker start</h2>
+          <div class="outline-text-2" id="text-4">
+            <p>
+              After the c-pineapple container created, when it stopped, use docker start<br  />
+              to start the pineapple container.<br  />
+            </p>
+
+            <div class="org-src-container">
+
+              <pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">-a : attach STDOUT/STDERR and forward signals</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">-i : attach container's STDIN</span>
+
+sudo docker start -ai c-pineapple
+              </pre>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
