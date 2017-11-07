@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>TensorFlow</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="./">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">ubuntu16.04 install tensorflow</h1>
+          <time datetime="2017-06-02">Nov 7 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. determine which TensorFlow to install</a></li>
+              <li><a href="#sec-3">3. Determine how to install TensorFlow</a></li>
+              <li><a href="#sec-4">4. install with virtualenv</a></li>
+              <li><a href="#sec-5">5. Next Steps</a></li>
+              <li><a href="#sec-6">6. Uninstalling TensorFlow</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li><a href="https://www.tensorflow.org/install/install_linux">https://www.tensorflow.org/install/install_linux</a><br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> determine which TensorFlow to install</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              I use TensorFlow with CPU support only.<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> Determine how to install TensorFlow</h2>
+          <div class="outline-text-2" id="text-3">
+            <p>
+              I use virtualenv<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> install with virtualenv</h2>
+          <div class="outline-text-2" id="text-4">
+            <ul class="org-ul">
+              <li>Install pip and virtualenv by issuing one of the following commands<br  />
+              </li>
+            </ul>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">$ sudo apt-get install python-pip python-dev python-virtualenv <span style="color: #75715E;"># </span><span style="color: #75715E;">for Python 2.7</span>
+ $ sudo apt-get install python3-pip python3-dev python-virtualenv <span style="color: #75715E;"># </span><span style="color: #75715E;">for Python 3.n</span>
+              </pre>
+            </div>
+
+            <ul class="org-ul">
+              <li>Create a virtualenv environment by issuing one of the following commands:<br  />
+              </li>
+            </ul>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">$ virtualenv --system-site-packages targetDirectory <span style="color: #75715E;"># </span><span style="color: #75715E;">for Python 2.7</span>
+ $ virtualenv --system-site-packages -p python3 targetDirectory <span style="color: #75715E;"># </span><span style="color: #75715E;">for Python 3.n</span>
+              </pre>
+            </div>
+
+            <p>
+              where targetDirectory specifies the top of the virtualenv tree. Our<br  />
+              instructions assume that targetDirectory is ~/tensorflow, but you may<br  />
+              choose any directory.<br  />
+            </p>
+
+            <ul class="org-ul">
+              <li>Activate the virtualenv environment by issuing one of the following commands:<br  />
+              </li>
+            </ul>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">$ source ~/tensorflow/bin/activate <span style="color: #75715E;"># </span><span style="color: #75715E;">bash, sh, ksh, or zsh</span>
+ $ source ~/tensorflow/bin/activate.csh  <span style="color: #75715E;"># </span><span style="color: #75715E;">csh or tcsh</span>
+              </pre>
+            </div>
+
+            <p>
+              The preceding source command should change your prompt to the following:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">(tensorflow)$
+              </pre>
+            </div>
+
+            <ul class="org-ul">
+              <li>Ensure pip ≥8.1 is installed:<br  />
+              </li>
+            </ul>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">(tensorflow)$ easy_install -U pip
+              </pre>
+            </div>
+
+            <ul class="org-ul">
+              <li>Issue one of the following commands to install TensorFlow in the active virtualenv environment:<br  />
+              </li>
+            </ul>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">(tensorflow)$ pip install --upgrade tensorflow      <span style="color: #75715E;"># </span><span style="color: #75715E;">for Python 2.7</span>
+ (tensorflow)$ pip3 install --upgrade tensorflow     <span style="color: #75715E;"># </span><span style="color: #75715E;">for Python 3.n</span>
+ (tensorflow)$ pip install --upgrade tensorflow-gpu  <span style="color: #75715E;"># </span><span style="color: #75715E;">for Python 2.7 and GPU</span>
+ (tensorflow)$ pip3 install --upgrade tensorflow-gpu <span style="color: #75715E;"># </span><span style="color: #75715E;">for Python 3.n and GPU</span>
+              </pre>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-5" class="outline-2">
+          <h2 id="sec-5"><span class="section-number-2">5</span> Next Steps</h2>
+          <div class="outline-text-2" id="text-5">
+            <p>
+              After installing TensorFlow, validate the installation.<br  />
+            </p>
+
+            <p>
+              Note that you must activate the virtualenv environment each time you use<br  />
+              TensorFlow. If the virtualenv environment is not currently active,<br  />
+              invoke one of the following commands:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">$ source ~/tensorflow/bin/activate      <span style="color: #75715E;"># </span><span style="color: #75715E;">bash, sh, ksh, or zsh</span>
+$ source ~/tensorflow/bin/activate.csh  <span style="color: #75715E;"># </span><span style="color: #75715E;">csh or tcsh</span>
+              </pre>
+            </div>
+
+            <p>
+              When the virtualenv environment is active, you may run TensorFlow programs<br  />
+              from this shell. Your prompt will become the following to indicate that your<br  />
+              tensorflow environment is active:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">(tensorflow)$
+              </pre>
+            </div>
+
+            <p>
+              When you are done using TensorFlow, you may deactivate the environment by<br  />
+              invoking the deactivate function as follows:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">(tensorflow)$ deactivate
+              </pre>
+            </div>
+
+            <p>
+              The prompt will revert back to your default prompt (as defined by the PS1<br  />
+              environment variable).<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-6" class="outline-2">
+          <h2 id="sec-6"><span class="section-number-2">6</span> Uninstalling TensorFlow</h2>
+          <div class="outline-text-2" id="text-6">
+            <p>
+              To uninstall TensorFlow, simply remove the tree you created. For example:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">$ rm -r targetDirectory
+              </pre>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
