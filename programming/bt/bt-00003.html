@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>bluetooth</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">nRF52832 change mac address</h1>
+          <time datetime="2017-12-08">Dec 8 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. Reference</a></li>
+              <li><a href="#sec-2">2. Target</a></li>
+              <li><a href="#sec-3">3. Introduce the bluetooth mac</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. device address</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-4">4. the tests with nRF52832</a>
+                <ul>
+                  <li><a href="#sec-4-1">4.1. change mac to be public address</a></li>
+                  <li><a href="#sec-4-2">4.2. change mac to be random static address</a></li>
+                  <li><a href="#sec-4-3">4.3. change mac to be random private address</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-5">5. sample code</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> Reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li><a href="https://devzone.nordicsemi.com/question/115157/changing-mac-address-in-nrf52/">https://devzone.nordicsemi.com/question/115157/changing-mac-address-in-nrf52/</a><br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> Target</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              I need multi beacons with multi ble macs in a same nRF52832 PCA10040 board.<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> Introduce the bluetooth mac</h2>
+          <div class="outline-text-2" id="text-3">
+            <p>
+              check the detail in bluetooth specification version 5.0<br  />
+            </p>
+
+            <p>
+              vol 6, part B, 1.3<br  />
+              vol 2, part B, 1.2<br  />
+            </p>
+          </div>
+
+          <div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> device address</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <p>
+                Devices are identified using a device address. Device addresses may be either<br  />
+                a public device address or a random device address. A public device address<br  />
+                and a random device address are both 48 bits in length.<br  />
+              </p>
+
+              <p>
+                A device shall use at least one type of device address and may contain both.<br  />
+              </p>
+
+              <p>
+                A device's <b>Identity Address</b> is a Public Device Address or Random Static Device<br  />
+                Address that it uses in packets it transmits. If a device is using Resolvable<br  />
+                Private Addresses, it shall also have an Identity Address.<br  />
+              </p>
+            </div>
+
+            <div id="outline-container-sec-3-1-1" class="outline-4">
+              <h4 id="sec-3-1-1"><span class="section-number-4">3.1.1</span> public device address</h4>
+              <div class="outline-text-4" id="text-3-1-1">
+                <p>
+                  Each bluetooth device shall be allocated a unique 48-bit Bluetooth device<br  />
+                  address (BD_ADDR). The address shall be a 48-bit extended unique identifier<br  />
+                  (EUI-48).<br  />
+                  Notice that you have to obtain a MAC address range from the IEEE registration<br  />
+                  Authority if you want to use public address for your devices.<br  />
+                </p>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-3-1-2" class="outline-4">
+              <h4 id="sec-3-1-2"><span class="section-number-4">3.1.2</span> random device address</h4>
+              <div class="outline-text-4" id="text-3-1-2">
+                <p>
+                  The random device address may be of either of the following two sub-types:<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>static address<br  />
+                  </li>
+                  <li>private address<br  />
+                  </li>
+                </ul>
+              </div>
+
+              <ol class="org-ol"><li><a id="sec-3-1-2-1" name="sec-3-1-2-1"></a>static address<br  /><div class="outline-text-5" id="text-3-1-2-1">
+                <p>
+                  A static address is a 48-bit randomly generated address and shall meet the<br  />
+                  following requirements:<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>The two most significant bits of the address shall be equqal to 1<br  />
+                  </li>
+                  <li>At least one bit of the random part of the address shall be 0<br  />
+                  </li>
+                  <li>At least one bit of the random part of the address shall be 1<br  />
+                  </li>
+                </ul>
+
+                <p>
+                  Note: If the static address of a device is changed, then the address stored<br  />
+                  in peer devices will not be valid and the ability to reconnect using the old<br  />
+                  address will be lost.<br  />
+                </p>
+              </div>
+              </li>
+
+              <li><a id="sec-3-1-2-2" name="sec-3-1-2-2"></a>private device address<br  /><div class="outline-text-5" id="text-3-1-2-2">
+                <p>
+                  The private address may be of either of the following two sub-types:<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>Non-resolvable private address<br  />
+                  </li>
+                  <li>Resolvable private address<br  />
+                  </li>
+                </ul>
+
+                <p>
+                  To generate a non-resolvable address, the device shall generate a 48-bit address<br  />
+                  with the following requirements:<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>The two most significant bits of the address shall be equqal to 0<br  />
+                  </li>
+                  <li>At least one bit of the random part of the address shall be 0<br  />
+                  </li>
+                  <li>At least one bit of the random part of the address shall be 1<br  />
+                  </li>
+                  <li>The address shall not be euqal to the public address<br  />
+                  </li>
+                </ul>
+
+                <p>
+                  To generate a resolvable private address, the device must have either the<br  />
+                  Local Identity Resolving Key (IRK) or the Peer Identity Resolving Key (IRK).<br  />
+                  The resolvable private address shall be generated with the IRK and a randomly<br  />
+                  generated 24-bit number. The random number is known as prand and shall meet the<br  />
+                  following requirements:<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>The two most significant bits of prand shall be equqal to 0 and 1<br  />
+                  </li>
+                  <li>At least one bit of the random part of prand shall be 0<br  />
+                  </li>
+                  <li>At least one bit of the random part of prand shall be 1<br  />
+                  </li>
+                  <li>The address shall not be euqal to the public address<br  />
+                  </li>
+                </ul>
+              </div>
+              </li></ol>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> the tests with nRF52832</h2>
+          <div class="outline-text-2" id="text-4">
+            <p>
+              the test board is PCA10040 with nRF52832.<br  />
+              SDK version: nRF5_SDK_14.2.0<br  />
+            </p>
+
+            <p>
+              Use the api `sd_ble_gap_addr_set' to set address, the address type as below:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-c"><span style="color: #F92672;">#define</span> <span style="color: #FD971F;">BLE_GAP_ADDR_TYPE_PUBLIC</span>                        0x00 <span style="color: #75715E;">/**</span><span style="color: #75715E;">&lt; Public address. </span><span style="color: #75715E;">*/</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">BLE_GAP_ADDR_TYPE_RANDOM_STATIC</span>                 0x01 <span style="color: #75715E;">/**</span><span style="color: #75715E;">&lt; Random static address. </span><span style="color: #75715E;">*/</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">BLE_GAP_ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE</span>     0x02 <span style="color: #75715E;">/**</span><span style="color: #75715E;">&lt; Random private resolvable address. </span><span style="color: #75715E;">*/</span>
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">BLE_GAP_ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE</span> 0x03 <span style="color: #75715E;">/**</span><span style="color: #75715E;">&lt; Random private non-resolvable address. </span><span style="color: #75715E;">*/</span>
+              </pre>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-1" class="outline-3">
+            <h3 id="sec-4-1"><span class="section-number-3">4.1</span> change mac to be public address</h3>
+            <div class="outline-text-3" id="text-4-1">
+              <p>
+                set code as below:<br  />
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">ble_gap_addr_t</span> <span style="color: #FD971F;">gap_address</span>;
+gap_address.addr_type = BLE_GAP_ADDR_TYPE_PUBLIC;
+memcpy(&amp;gap_address.addr, <span style="color: #E6DB74;">"\x62\x52\x42\x09\xe7\x34"</span>, <span style="color: #F92672;">sizeof</span>(gap_address.addr));
+err_code = sd_ble_gap_addr_set(&amp;gap_address);
+APP_ERROR_CHECK(err_code);
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-2" class="outline-3">
+            <h3 id="sec-4-2"><span class="section-number-3">4.2</span> change mac to be random static address</h3>
+            <div class="outline-text-3" id="text-4-2">
+              <p>
+                make sure the The two most significant bits of the address shall be equqal to 1.<br  />
+                The code below change the two most significatn bits to be 1.<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c">gap_address.addr[5] |= 0xc0;
+                </pre>
+              </div>
+
+              <p>
+                set code as below for a random static mac:<br  />
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">ble_gap_addr_t</span> <span style="color: #FD971F;">gap_address</span>;
+gap_address.addr_type = BLE_GAP_ADDR_TYPE_RANDOM_STATIC;
+memcpy(&amp;gap_address.addr, <span style="color: #E6DB74;">"\x62\x52\x42\x09\xe7\x34"</span>, <span style="color: #F92672;">sizeof</span>(gap_address.addr));
+gap_address.addr[5] |= 0xc0;
+err_code = sd_ble_gap_addr_set(&amp;gap_address);
+APP_ERROR_CHECK(err_code);
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-3" class="outline-3">
+            <h3 id="sec-4-3"><span class="section-number-3">4.3</span> change mac to be random private address</h3>
+            <div class="outline-text-3" id="text-4-3">
+            </div><div id="outline-container-sec-4-3-1" class="outline-4">
+              <h4 id="sec-4-3-1"><span class="section-number-4">4.3.1</span> change as random private resolvable address</h4>
+              <div class="outline-text-4" id="text-4-3-1">
+                <p>
+                  Reference link below for detail:<br  />
+                  <a href="https://devzone.nordicsemi.com/question/107812/directed-advertising-with-pre-shared-irk/">https://devzone.nordicsemi.com/question/107812/directed-advertising-with-pre-shared-irk/</a><br  />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-5" class="outline-2">
+          <h2 id="sec-5"><span class="section-number-2">5</span> sample code</h2>
+          <div class="outline-text-2" id="text-5">
+            <p>
+              check the sample code from<br  />
+              <a href="https://github.com/aqing1987/s-bt/tree/master/nRF52832/s_ble_app_set_mac_test">https://github.com/aqing1987/s-bt/tree/master/nRF52832/s_ble_app_set_mac_test</a></p>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
