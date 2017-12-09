@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>bluetooth</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Prepare Genuino101 Environment</h1>
+          <time datetime="2017-12-09">Dec 9 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. Genuino101 key feature</a></li>
+              <li><a href="#sec-3">3. install the Arduino Desktop IDE</a></li>
+              <li><a href="#sec-4">4. use genuino 101 on the Arduino Desktop IDE</a>
+                <ul>
+                  <li><a href="#sec-4-1">4.1. add the Intel Curie Core</a></li>
+                  <li><a href="#sec-4-2">4.2. install drivers for genuino 101</a></li>
+                  <li><a href="#sec-4-3">4.3. open your first sketch</a></li>
+                  <li><a href="#sec-4-4">4.4. upload the program</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li><a href="https://www.arduino.cc/en/Guide/Arduino101">https://www.arduino.cc/en/Guide/Arduino101</a><br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> Genuino101 key feature</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              The 101 adds Bluetooth Low Energy capabilities. and that's why I bought it.<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> install the Arduino Desktop IDE</h2>
+          <div class="outline-text-2" id="text-3">
+            <p>
+              Install arduino 1.8.5 is easy. download it from<br  />
+            </p>
+
+            <p>
+              <a href="https://www.arduino.cc/en/Main/Software#download">https://www.arduino.cc/en/Main/Software#download</a><br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> use genuino 101 on the Arduino Desktop IDE</h2>
+          <div class="outline-text-2" id="text-4">
+          </div><div id="outline-container-sec-4-1" class="outline-3">
+            <h3 id="sec-4-1"><span class="section-number-3">4.1</span> add the Intel Curie Core</h3>
+            <div class="outline-text-3" id="text-4-1">
+              <p>
+                Open the Boards Manager:<br  />
+                Tools -&gt; Boards -&gt; Boards Manager<br  />
+              </p>
+
+              <p>
+                search Intel Curie or 101, once found, install it.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-2" class="outline-3">
+            <h3 id="sec-4-2"><span class="section-number-3">4.2</span> install drivers for genuino 101</h3>
+            <div class="outline-text-3" id="text-4-2">
+              <p>
+                Now that the Curie Core is installed, you can connect the board to the computer<br  />
+                using a standard USB cable. The very first time your computer may go through<br  />
+                the new hardware installation process.<br  />
+              </p>
+            </div>
+
+            <div id="outline-container-sec-4-2-1" class="outline-4">
+              <h4 id="sec-4-2-1"><span class="section-number-4">4.2.1</span> select your board type and port</h4>
+              <div class="outline-text-4" id="text-4-2-1">
+                <p>
+                  From <b>Tools</b> select the <b>Board Arduino/Genuino 101</b><br  />
+                  and then the <b>Port</b> that is labeled with the same name.<br  />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-3" class="outline-3">
+            <h3 id="sec-4-3"><span class="section-number-3">4.3</span> open your first sketch</h3>
+            <div class="outline-text-3" id="text-4-3">
+              <p>
+                Everything is now ready to upload your first sketch.<br  />
+              </p>
+
+              <p>
+                File -&gt; Examples -&gt; 01.Basic -&gt; Blink<br  />
+              </p>
+
+              <p>
+                This sketch just flashes the built in LED connected to Digital pin 13 at one<br  />
+                second pace for on and off.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-4" class="outline-3">
+            <h3 id="sec-4-4"><span class="section-number-3">4.4</span> upload the program</h3>
+            <div class="outline-text-3" id="text-4-4">
+              <p>
+                select<br  />
+              </p>
+
+              <p>
+                Sketch -&gt; Upload<br  />
+              </p>
+            </div>
+
+            <div id="outline-container-sec-4-4-1" class="outline-4">
+              <h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> error fix</h4>
+              <div class="outline-text-4" id="text-4-4-1">
+              </div><ol class="org-ol"><li><a id="sec-4-4-1-1" name="sec-4-4-1-1"></a>openPort(); Exception type - Permission denied<br  /><div class="outline-text-5" id="text-4-4-1-1">
+                <p>
+                  To fix this issue, change serial permission before run.<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-sh">sudo chmod 666 /dev/ttyACM0
+                  </pre>
+                </div>
+              </div>
+              </li>
+
+              <li><a id="sec-4-4-1-2" name="sec-4-4-1-2"></a>ERROR: Timed out waiting for Arduino 101 on /dev/ttyACM0<br  /><div class="outline-text-5" id="text-4-4-1-2">
+                <p>
+                  the <b>Intel Curie Boards</b> version is <b>2.0.2</b>.<br  />
+                </p>
+
+                <p>
+                  do the command below:<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-sh">chmod +x ~/.arduino15/packages/Intel/hardware/arc32/2.0.2/scripts/create_dfu_udev_rule
+sudo ~/.arduino15/packages/Intel/hardware/arc32/2.0.2/scripts/create_dfu_udev_rule
+                  </pre>
+                </div>
+              </div>
+              </li></ol>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
