@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>bluetooth</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Genuino101 CurieBle CallbackLED</h1>
+          <time datetime="2017-12-10">Dec 10 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. introduce</a></li>
+              <li><a href="#sec-3">3. test</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. on the smartphone</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-4">4. code analysis</a></li>
+              <li><a href="#sec-5">5. code sample</a></li>
+              <li><a href="#sec-6">6. BLE knowledge</a>
+                <ul>
+                  <li><a href="#sec-6-1">6.1. notify</a></li>
+                  <li><a href="#sec-6-2">6.2. update a characteristic</a></li>
+                  <li><a href="#sec-6-3">6.3. central and peripheral devices</a></li>
+                  <li><a href="#sec-6-4">6.4. services, characteristics, and UUIDs</a></li>
+                  <li><a href="#sec-6-5">6.5. service design patterns</a></li>
+                  <li><a href="#sec-6-6">6.6. read/write/notify/indicate</a></li>
+                  <li><a href="#sec-6-7">6.7. adverting and GAP</a></li>
+                  <li><a href="#sec-6-8">6.8. GATT</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <p>
+              <a href="https://www.arduino.cc/en/Tutorial/Genuino101CurieBLECallbackLED">https://www.arduino.cc/en/Tutorial/Genuino101CurieBLECallbackLED</a><br  />
+              <a href="https://www.arduino.cc/en/Reference/CurieBLE">https://www.arduino.cc/en/Reference/CurieBLE</a><br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> introduce</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              With this tutorial use the Genuino101's onboard Bluetooth Low Energy capabilities<br  />
+              to turn on and of the LED connected to Pin 13 from a smartphone. You create a<br  />
+              LED service that polls the central and creates BLE events that are maaged with<br  />
+              callbacks. The values are sent using nRF Master Control Panel app, available for<br  />
+              Android and iOS.<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> test</h2>
+          <div class="outline-text-2" id="text-3">
+          </div><div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> on the smartphone</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <p>
+                To drive the onboard LED of genuino101, you need the nF Master Control Panel<br  />
+                for Android. Launch it and do a SCAN. You should find the <b>LEDCB</b> tab with<br  />
+                a connect button.<br  />
+              </p>
+
+              <p>
+                Tap on connect, and you find the description of our BLE service offered by the<br  />
+                101 board. The unknown service has a UUID 19B10000-E8F2-537E-4F6C-D104768A1214<br  />
+                and it is set by the<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">BLEService</span> <span style="color: #A6E22E;">ledService</span>(<span style="color: #E6DB74;">"19B10000-E8F2-537E-4F6C-D104768A1214"</span>);
+                </pre>
+              </div>
+              <p>
+                statement at the beginning of the sketch.<br  />
+              </p>
+
+              <p>
+                Tap the <b>Unknown Service</b> to open up its characteristic. It includes properties<br  />
+                that can be written with a Write Request. you also find two icons on the right<br  />
+                of the Unknow Characteristic. The arrow pointing down means read, the other<br  />
+                means write.<br  />
+              </p>
+
+              <p>
+                Tap the arrow pointing up to open the <b>Write value</b> popup, then set the data<br  />
+                type to UINT 8 and tap on the line to write your chosen value(either "0" or "1").<br  />
+                As soon as you tap on <b>send</b> the value is sent to 101 board and the LED instantly<br  />
+                changes accordingly.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> code analysis</h2>
+          <div class="outline-text-2" id="text-4">
+            <div class="org-src-container">
+
+              <pre class="src src-c"><span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">&lt;CurieBLE.h&gt;</span>
+              </pre>
+            </div>
+            <p>
+              CurieBLE.h is the library that gives access to all the parameters, features and<br  />
+              functions of the BLE module of the 101 board.<br  />
+            </p>
+
+            <div class="org-src-container">
+
+              <pre class="src src-c"><span style="color: #66D9EF;">BLEPeripheral</span> <span style="color: #FD971F;">blePeripheral</span>;
+              </pre>
+            </div>
+            <p>
+              The BLE peripheral device is typically the board you are programming. Peripheral<br  />
+              connects to the central to expose its characteristics.<br  />
+            </p>
+
+            <div class="org-src-container">
+
+              <pre class="src src-c"><span style="color: #66D9EF;">BLEService</span> <span style="color: #A6E22E;">ledService</span>(<span style="color: #E6DB74;">"19B10000-E8F2-537E-4F6C-D104768A1214"</span>);
+              </pre>
+            </div>
+            <p>
+              The BLE service allows you to create the service you want to show through your<br  />
+              BLE device.<br  />
+            </p>
+
+            <div class="org-src-container">
+
+              <pre class="src src-c"><span style="color: #66D9EF;">BLECharCharacteristic</span> <span style="color: #A6E22E;">switchChar</span>(<span style="color: #E6DB74;">"19B10001-E8F2-537E-4F6C-D104768A1214"</span>, BLERead | BLEWrite);
+              </pre>
+            </div>
+            <ul class="org-ul">
+              <li>UUID<br  />
+              </li>
+              <li>properties: what remote clients will be able to get notifications if this<br  />
+                characteristic changes. It can assume the following value:<br  />
+                <ul class="org-ul">
+                  <li>BLERead<br  />
+                  </li>
+                  <li>BLEWrite<br  />
+                  </li>
+                  <li>BLENotify<br  />
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <div class="org-src-container">
+
+              <pre class="src src-c">blePeripheral.setLocalName(<span style="color: #E6DB74;">"LEDCB"</span>);
+              </pre>
+            </div>
+            <p>
+              sets the local name of your BLE peripheral.<br  />
+            </p>
+
+            <div class="org-src-container">
+
+              <pre class="src src-c">blePeripheral.addAttribute(ledService);
+blePeripheral.addAttribute(switchChar);
+              </pre>
+            </div>
+            <p>
+              adds an attribute to the peripheral.<br  />
+            </p>
+
+            <div class="org-src-container">
+
+              <pre class="src src-c">blePeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
+blePeripheral.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
+switchChar.setEventHandler(BLEWritten, switchCharacteristicWritten);
+              </pre>
+            </div>
+            <p>
+              sets the callback function to be called in case of match with the chosen event.<br  />
+            </p>
+
+            <p>
+              The following functions are callbacks driven by the BLE events.<br  />
+              <b>blePeripheralConnectHandler()</b> - called when BLE central connects to the 101<br  />
+              board.<br  />
+            </p>
+
+            <p>
+              <b>blePeripheralDisconnectHandler()</b> - called when BLE central disconnects from<br  />
+              the 101 board.<br  />
+            </p>
+
+            <p>
+              <b>switchCharacteristicWritten()</b> - called when BLE central writes the switch<br  />
+              characteristic. It switches LED on or off depending on the value written to<br  />
+              that characteristic by the user on the nRF Master Control Panel.<br  />
+            </p>
+
+            <div class="org-src-container">
+
+              <pre class="src src-c">blePeripheral.begin();
+              </pre>
+            </div>
+            <p>
+              begin advertising BLE service.<br  />
+            </p>
+
+            <div class="org-src-container">
+
+              <pre class="src src-c">blePeripheral.poll();
+              </pre>
+            </div>
+            <p>
+              Poll the radio for events.<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-5" class="outline-2">
+          <h2 id="sec-5"><span class="section-number-2">5</span> code sample</h2>
+          <div class="outline-text-2" id="text-5">
+            <p>
+              get the code sample from<br  />
+              <a href="https://github.com/arduino/ArduinoCore-arc32/tree/master/libraries/CurieBLE">https://github.com/arduino/ArduinoCore-arc32/tree/master/libraries/CurieBLE</a><br  />
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-sec-6" class="outline-2">
+          <h2 id="sec-6"><span class="section-number-2">6</span> BLE knowledge</h2>
+          <div class="outline-text-2" id="text-6">
+            <p>
+              Bluetooth 4.0 includes both traditional Bluetooth, now labeled "Bluetooth Classic",<br  />
+              and the new Bluetooth Low Energy(Bluetooth LE, or BLE). BLE is optimized for low<br  />
+              power use at low data rates, and was designed to operate from simple lithium coin<br  />
+              cell batteries.<br  />
+            </p>
+
+            <p>
+              Unlike standard bluetooth communication basically based on an asynchronous serial<br  />
+              connection (UART) a Bluetooth LE radio acts like a community bulletin board. The<br  />
+              computers that connect to it are like community members that read the bulletin<br  />
+              board. Each radio acts as either the bulletin board or the reader. If your radio<br  />
+              is a bulletin board (called a peripheral device in Bluetooth LE parlance) it<br  />
+              posts data for all radios in the community to read. If your radio is a reader<br  />
+              (called a central device in Bluetooth LE terms) it reads from any of the bulletin<br  />
+              boards (peripheral devices) that have information about which it cares. You can<br  />
+              also think of peripheral devices as the servers in a client-server transaction,<br  />
+              because they contain the information that reader radios ask for. Similarly,<br  />
+              central devices are the clients of the Bluetooth LE world because they read<br  />
+              information available from the peripherals.<br  />
+            </p>
+
+            <p>
+              Think of a Bluetooth LE peripheral device as a bulletin board and central devices<br  />
+              as viewers of the board. Central devices view the services, get the data, then<br  />
+              move on. Each transaction is quick(a few milliseconds), so multiple central<br  />
+              devices can get data from one peripheral. (Note that: if the peripheral has been<br  />
+              connected by one central, other central devices will not see it.)<br  />
+            </p>
+
+            <p>
+              The information presented by a peripheral is structured as <b>services</b>, each of<br  />
+              which is subdivided into <b>characteristics</b>. You can think of services as the<br  />
+              notices on a bulletin board, and characteristics as the individual paragraphs<br  />
+              of those notices. If you're a peripheral device, you just update each service<br  />
+              characteristic when it needs updating and don't worry about whether the central<br  />
+              devices read them or not. If you're a central device, you connect to the<br  />
+              peripheral then read the boxes you want. If a given characteristic is readable<br  />
+              and writable, then the peripheral and central can both change it.<br  />
+            </p>
+          </div>
+
+          <div id="outline-container-sec-6-1" class="outline-3">
+            <h3 id="sec-6-1"><span class="section-number-3">6.1</span> notify</h3>
+            <div class="outline-text-3" id="text-6-1">
+              <p>
+                The Bluetooth LE specification includes a mechanism known as <b>notify</b> that lets<br  />
+                you know when data's changed. When notify on a characteristic is enabled and the<br  />
+                sender writes to it, the new value is automatically sent to the receiver, without<br  />
+                the receiver explicitly issuing a read command. This is commonly used for streaming<br  />
+                data such as accelerometer or other sensor readings. There's a variation on this<br  />
+                specification called <b>indicate</b> which works similarly, but in the indicate spe-<br  />
+                cification, the reader sends an acknowledgement of the pushed data.<br  />
+              </p>
+
+              <p>
+                The client-server structure of Bluetooth LE, combined with the notify characteristic,<br  />
+                is generally called a <b>publish-and-subscribe-model</b>.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-2" class="outline-3">
+            <h3 id="sec-6-2"><span class="section-number-3">6.2</span> update a characteristic</h3>
+            <div class="outline-text-3" id="text-6-2">
+              <p>
+                Your peripheral should update characteristics when there's a significant change<br  />
+                to them. For example, when a switch changes from off to on, update its characteristic.<br  />
+                When an analog sensor changes by a significant amount, update its characteristic.<br  />
+                Just as with writing to a characteristic, you could update your characteristics<br  />
+                on a regular interval, but this wastes processing power and energy if the<br  />
+                characteristic has not changed.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-3" class="outline-3">
+            <h3 id="sec-6-3"><span class="section-number-3">6.3</span> central and peripheral devices</h3>
+            <div class="outline-text-3" id="text-6-3">
+              <p>
+                <b>Central</b> devices are <b>clients</b>. They read and write data from peripheral devices.<br  />
+                <b>Peripheral</b> devices are <b>servers</b>. They provide data from sensors as readable<br  />
+                characteristics, and provide read/writable characteristics to control actuators<br  />
+                like motors, lights, and so forth.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-4" class="outline-3">
+            <h3 id="sec-6-4"><span class="section-number-3">6.4</span> services, characteristics, and UUIDs</h3>
+            <div class="outline-text-3" id="text-6-4">
+              <p>
+                A BLE peripheral will provide <b>services</b>, which in turn provide <b>characteristics</b>.<br  />
+                You can define your own services, or use standard services.<br  />
+                <a href="https://www.bluetooth.com/specifications/gatt/services">https://www.bluetooth.com/specifications/gatt/services</a><br  />
+              </p>
+
+              <p>
+                Services are identified by unique numbers known as UUIDs. You know about UUIDs<br  />
+                from other contexts. Standard services have a 16-bit UUID and custom services<br  />
+                have a 128-bit. The ability to define services and characteristics depends on<br  />
+                the radio you're using and its firmware.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-5" class="outline-3">
+            <h3 id="sec-6-5"><span class="section-number-3">6.5</span> service design patterns</h3>
+            <div class="outline-text-3" id="text-6-5">
+              <p>
+                A characteristic value can be up to 20 bytes long. This is a key constraint in<br  />
+                designing services. Given this limit, you should consider how best to store<br  />
+                data about your sensors and actuators most effectively for your application.<br  />
+                The simplest design pattern is to store one sensor or actuator value per<br  />
+                characteristic, in ASCII encoded values.<br  />
+              </p>
+
+              <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+                <colgroup>
+                  <col  class="left" />
+
+                  <col  class="right" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col" class="left">Characteristc</th>
+                    <th scope="col" class="right">value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="left">Accelerometer X</td>
+                    <td class="right">200</td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <tr>
+                    <td class="left">Accelerometer Y</td>
+                    <td class="right">134</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p>
+                This is also the most expensive in memory terms, and would take the longest to<br  />
+                read. But it's the simplest for development and debugging.<br  />
+                You could also combine readings into a single characteristic, when a given sensor<br  />
+                or actuator has associated with it.<br  />
+              </p>
+
+              <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+                <colgroup>
+                  <col  class="left" />
+
+                  <col  class="left" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col" class="left">Characteristic</th>
+                    <th scope="col" class="left">value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="left">Motor Speed, Direction</td>
+                    <td class="left">150,1</td>
+                  </tr>
+                </tbody>
+                <tbody>
+                  <tr>
+                    <td class="left">Accelerometer X, Y</td>
+                    <td class="left">200,134</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p>
+                This is more efficient, but you need to be careful not to exceed the 20-byte<br  />
+                limit.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-6" class="outline-3">
+            <h3 id="sec-6-6"><span class="section-number-3">6.6</span> read/write/notify/indicate</h3>
+            <div class="outline-text-3" id="text-6-6">
+              <p>
+                There are 4 things a central device can do with a characteristic:<br  />
+              </p>
+              <ul class="org-ul">
+                <li>Read: ask the peripheral to send back the current value of the characteristic.<br  />
+                  Often used for characteristics that don't change very often, for example<br  />
+                  characteristics used for configuration, version numbers, etc.<br  />
+                </li>
+
+                <li>Write: modify the value of the characteristic. Often used for things that are<br  />
+                  like commands, for example telling the peripheral to turn a motor on or off.<br  />
+                </li>
+
+                <li>Indicate and Notify: ask the peripheral to continuously send updated values<br  />
+                  of the characteristic, without the central having to constantly ask for it.<br  />
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-7" class="outline-3">
+            <h3 id="sec-6-7"><span class="section-number-3">6.7</span> adverting and GAP</h3>
+            <div class="outline-text-3" id="text-6-7">
+              <p>
+                BLE devices let other devices know that they exist by advertising using the<br  />
+                <b>General Access Profile (GAP)</b>. Adverting packets can contain a device name,<br  />
+                some other information, and also a list of the services it provides.<br  />
+              </p>
+
+              <p>
+                Advertising packets have a limited size. You will only be able to fit a single<br  />
+                128-bit service UUID in the packet. Make sure the device name is not too long,<br  />
+                or you won't even be able to fit that.<br  />
+              </p>
+
+              <p>
+                You can provide additional services that are not advertised. Central devices<br  />
+                will learn about these through the connection/bonding process. Non-advertised<br  />
+                services cannot be used to discover devices, though. Sometimes this is not an<br  />
+                issue. For example, you may have a custom peripheral device with a custom<br  />
+                service, but in your central device app you may know that it also provides the<br  />
+                Battery Service and other services.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-6-8" class="outline-3">
+            <h3 id="sec-6-8"><span class="section-number-3">6.8</span> GATT</h3>
+            <div class="outline-text-3" id="text-6-8">
+              <p>
+                The Bluetooth LE protocol operates on multiple layers. <b>General Attribute Profile (GATT)</b><br  />
+                is the layer that defines services and characteristics and enables read/write/<br  />
+                notify/indicate operations on them. When reading more about GATT, you may encounter<br  />
+                GATT concepts of a "server" and "client". These don't always correspond to central<br  />
+                and peripherals. In most cases, though, the peripheral is the GATT server (since<br  />
+                it provides the services and characteristics), while the central is the GATT client.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
