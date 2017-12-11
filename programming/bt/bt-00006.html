@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>bluetooth</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">nRF52832 multiple beacon with multiple ble address</h1>
+          <time datetime="2017-12-11">Dec 11 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. introduce</a></li>
+              <li><a href="#sec-3">3. modify steps</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. set SoftDevice iBeacon and BLE address</a></li>
+                  <li><a href="#sec-3-2">3.2. set TimeSlot iBeacon and BLE address</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-4">4. sample code</a></li>
+              <li><a href="#sec-5">5. base knowledge for S132 SoftDevice</a>
+                <ul>
+                  <li><a href="#sec-5-1">5.1. multiprotocol support</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li>S132_SDS_v5.0.pdf<br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> introduce</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              This sample is realized by using SoftDevice and TimeSlot.<br  />
+            </p>
+
+            <p>
+              One ibeacon with mac E2:52:42:32:22:12 realized by using SoftDevice.<br  />
+              Another ibeacon with mac E2:52:42:32:22:33 realized by using TimeSlot.<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> modify steps</h2>
+          <div class="outline-text-2" id="text-3">
+          </div><div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> set SoftDevice iBeacon and BLE address</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <p>
+                Follow<br  />
+                <a href="http://www.chenjingsi.com/programming/bt/bt-00002.html">http://www.chenjingsi.com/programming/bt/bt-00002.html</a><br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-2" class="outline-3">
+            <h3 id="sec-3-2"><span class="section-number-3">3.2</span> set TimeSlot iBeacon and BLE address</h3>
+            <div class="outline-text-3" id="text-3-2">
+              <p>
+                Put advertiser_beacon.c and advertiser_beacon.h to the project.<br  />
+              </p>
+
+              <p>
+                Then add code below to main.c<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #75715E;">// </span><span style="color: #75715E;">Timeslot beacon zone start</span>
+<span style="color: #F92672;">#include</span> <span style="color: #E6DB74;">"advertiser_beacon.h"</span>
+
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">BEACON_UUID</span>                          0xff, 0xfe, 0x2d, 0x12, 0x1e, 0x4b, 0x0f, 0xa4,\
+                                             0x99, 0x4e, 0xce, 0xb5, 0x31, 0xf4, 0x05, 0x45
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">BEACON_ADV_INTERVAL</span>                  400
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">BEACON_MAJOR</span>                         0x1234
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">BEACON_MINOR</span>                         0x0000
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">BEACON_RSSI</span>                          0xC3
+
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">ble_beacon_init_t</span> <span style="color: #FD971F;">beacon_init</span>;
+<span style="color: #75715E;">// </span><span style="color: #75715E;">Timeslot beacon zone stop</span>
+
+<span style="color: #F92672;">static</span> <span style="color: #66D9EF;">void</span> <span style="color: #A6E22E;">beacon_adv_init</span>(<span style="color: #66D9EF;">void</span>)
+{
+    <span style="color: #F92672;">static</span> <span style="color: #66D9EF;">uint8_t</span> <span style="color: #FD971F;">beacon_uuid</span>[] = {BEACON_UUID};
+
+    memcpy(beacon_init.uuid.uuid128, beacon_uuid, <span style="color: #F92672;">sizeof</span>(beacon_uuid));
+    beacon_init.adv_interval  = BEACON_ADV_INTERVAL;
+    beacon_init.major         = BEACON_MAJOR;
+    beacon_init.minor         = BEACON_MINOR;
+    beacon_init.manuf_id      = APP_COMPANY_IDENTIFIER;
+    beacon_init.rssi          = BEACON_RSSI;
+    beacon_init.error_handler = beacon_advertiser_error_handler;
+
+    <span style="color: #66D9EF;">uint32_t</span> <span style="color: #FD971F;">err_code</span> = sd_ble_gap_addr_get(&amp;beacon_init.beacon_addr);
+    APP_ERROR_CHECK(err_code);
+
+    <span style="color: #75715E;">// </span><span style="color: #75715E;">use another mac address</span>
+    beacon_init.beacon_addr.addr[0] = 0x33;
+    beacon_init.beacon_addr.addr[1] = 0x22;
+
+    app_beacon_init(&amp;beacon_init);
+}
+                </pre>
+              </div>
+
+              <p>
+                add the invoke api to main() function.<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c">beacon_adv_init();
+app_beacon_start();
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> sample code</h2>
+          <div class="outline-text-2" id="text-4">
+            <p>
+              Check the sample code from<br  />
+              <a href="https://github.com/aqing1987/s-bt/tree/master/nRF52832/s_ble_app_multi_beacon_multi_mac_test">https://github.com/aqing1987/s-bt/tree/master/nRF52832/s_ble_app_multi_beacon_multi_mac_test</a><br  />
+            </p>
+
+            <p>
+              <b>Note:</b> put the code to <b>nRF5_SDK_14.2.0_17b948a\examples\ble_peripheral</b> for compiling.<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-5" class="outline-2">
+          <h2 id="sec-5"><span class="section-number-2">5</span> base knowledge for S132 SoftDevice</h2>
+          <div class="outline-text-2" id="text-5">
+            <p>
+              The S132 SoftDevice is a Bluetooth low energy central and peripheral protocol<br  />
+              stack solution. It supports up to twenty connections with an additional observer<br  />
+              and a broadcaster role all running concurrently. The S132 SoftDevice integrates<br  />
+              a Bluetooth low energy Controller and Host, and provides a full and flexible API<br  />
+              for building Bluetooth low energy nRF52 System on Chip (SOC) solutions.<br  />
+            </p>
+
+            <p>
+              The S132 SoftDevice is a precompiled and linked binary image implementing a<br  />
+              Bluetooth 5.0 low energy protocol stack for the NRF52 Series of SoCs.<br  />
+            </p>
+
+            <p>
+              A SoftDevice consists of three main components:<br  />
+            </p>
+            <ul class="org-ul">
+              <li>SoC Library: implementation and NRF API for shared hardware resource management<br  />
+                (application coexistence)<br  />
+              </li>
+              <li>SoftDevice Manager: implementation and nRF for SoftDevice management (enabling/<br  />
+                disabling the SoftDevice, etc.)<br  />
+              </li>
+              <li>Bluetooth 5.0 low energy protocol stack: implementation of protocol stack and API<br  />
+              </li>
+            </ul>
+          </div>
+
+          <div id="outline-container-sec-5-1" class="outline-3">
+            <h3 id="sec-5-1"><span class="section-number-3">5.1</span> multiprotocol support</h3>
+            <div class="outline-text-3" id="text-5-1">
+              <p>
+                Multiprotocol support allows developers to implement their own 2.4GHz proprietary<br  />
+                protocol in the application both when the SoftDevice is not in use (non-concurrent)<br  />
+                and while the SoftDevice protocol stack is in use (concurrent). For concurrent<br  />
+                multiprotocol implementations, the Radio Timeslot API allows the application<br  />
+                protocol to safely schedule radio usage between Bluetooth low energy events.<br  />
+              </p>
+            </div>
+
+            <div id="outline-container-sec-5-1-1" class="outline-4">
+              <h4 id="sec-5-1-1"><span class="section-number-4">5.1.1</span> concurrent multiprotocol implementation using the Radio Timeslot API</h4>
+              <div class="outline-text-4" id="text-5-1-1">
+                <p>
+                  The Radio Timeslot API allows the nRF52 device to be part of a network using the<br  />
+                  SoftDevice protocol stack and an alternative network of wireless devices at the<br  />
+                  same time.<br  />
+                </p>
+
+                <p>
+                  The Radio Timeslot feature gives the application access to the radio and other<br  />
+                  restricted peripherals during defined time intervals, denoted as timeslots. Using<br  />
+                  this feature, the application can run other radio protocols concurrently with<br  />
+                  the internal protocol stack of the SoftDevice. It can also be used to suppress<br  />
+                  SoftDevice radio activity and to reserve guaranteed time for application activities<br  />
+                  with hard timing requirements, which cannot be met by using the SoC Radio Notifications.<br  />
+                </p>
+
+                <p>
+                  The Timeslot feature is part of the SoC library. The feature works by having the<br  />
+                  SoftDevice time-multiplex access to peripherals between the application and<br  />
+                  itself. Through the SoC API, the application can open a Timeslot session and<br  />
+                  request timeslots. When a Timeslot request is granted, the application has<br  />
+                  exclusive and real-time access to the normally blocked RADIO, TIMER0 and can use<br  />
+                  these freely for the duration of the timeslot.<br  />
+                </p>
+              </div>
+
+              <ol class="org-ol"><li><a id="sec-5-1-1-1" name="sec-5-1-1-1"></a>request types<br  /><div class="outline-text-5" id="text-5-1-1-1">
+                <p>
+                  There are two types of Radio Timeslot requests, earliest possible Timeslot<br  />
+                  requests and normal Timeslot requests.<br  />
+                </p>
+
+                <p>
+                  Timeslots may be requested as earliest possible, in which case the timeslot<br  />
+                  occurs at the first available opportunity. In the request, the application can<br  />
+                  limit how far into the future the timeslot may be placed.<br  />
+                </p>
+
+                <p>
+                  <b>Important:</b> The first request in a session must always be earliest possible to<br  />
+                  create the timing reference point for later timeslots.<br  />
+                </p>
+
+                <p>
+                  Timeslots may also be requested at a given time (normal). In this case, the<br  />
+                  application specifies in the request when the timeslot should start and the time<br  />
+                  is measured from the start of the previous timeslot.<br  />
+                </p>
+
+                <p>
+                  Timeslots requested as earliest possible are useful for single timeslots and<br  />
+                  for non-periodic or non-timed activity. Timeslots requested at a given time<br  />
+                  relative to the previous timeslot are useful for periodic and timed activities,<br  />
+                  for example, a periodic proprietary radio protocol.<br  />
+                </p>
+              </div>
+              </li>
+
+              <li><a id="sec-5-1-1-2" name="sec-5-1-1-2"></a>request priorities<br  /><div class="outline-text-5" id="text-5-1-1-2">
+                <p>
+                  Radio Timeslots can be requested at either high or normal priority, indicating<br  />
+                  how important it is for the application to access the specified peripherals. A<br  />
+                  Timeslot request can only be blocked or cancelled due to an overlapping<br  />
+                  SoftDevice activity that has a higher scheduling priority.<br  />
+                </p>
+              </div>
+              </li>
+
+              <li><a id="sec-5-1-1-3" name="sec-5-1-1-3"></a>timeslot length<br  /><div class="outline-text-5" id="text-5-1-1-3">
+                <p>
+                  A Radio Timeslot is requested for a given length. Ongoing timeslots have the<br  />
+                  possibility to be extended.<br  />
+                  The length of the timeslot is specified by the application in the Timeslot request<br  />
+                  and ranges from 100us to 100ms. Longer continuous timeslots can be achieved by<br  />
+                  requesting to extend the current timeslot. A timeslot may be extended multiple<br  />
+                  times, as long as its duration does not extned beyong the time limit set by other<br  />
+                  SoftDevice activities, and up to a maximum length of 128 seconds.<br  />
+                </p>
+              </div>
+              </li>
+
+              <li><a id="sec-5-1-1-4" name="sec-5-1-1-4"></a>scheduling<br  /><div class="outline-text-5" id="text-5-1-1-4">
+                <p>
+                  The SoftDevice includes a scheduler which manages radio timeslots and priorities<br  />
+                  and sets up timers to grant timeslots.<br  />
+                </p>
+
+                <p>
+                  Whether a Timeslot request is granted and access to the peripherals is given is<br  />
+                  determined by the following factors:<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>The time the request is made<br  />
+                  </li>
+                  <li>The exact time in the future the timeslot is requested for<br  />
+                  </li>
+                  <li>The desired priority level of the request<br  />
+                  </li>
+                  <li>The length of the requested timeslot<br  />
+                  </li>
+                </ul>
+
+                <p>
+                  Timeslots requested at high priority will cancel other activities scheduled at<br  />
+                  lower priorities in case of collision. Requests for short timeslots have a higher<br  />
+                  probability of succeeding than requests for longer timeslots because shorter<br  />
+                  timeslots are easier to fit into the schedule.<br  />
+                </p>
+
+                <p>
+                  <b>Note:</b> Radio Notification signals behave the same way for timeslots requested<br  />
+                  through the Radio Timeslot interface as for SoftDevice internal activities. If<br  />
+                  Radio Notifications are enabled, Radio Timeslots will be notified.<br  />
+                </p>
+              </div>
+              </li>
+
+              <li><a id="sec-5-1-1-5" name="sec-5-1-1-5"></a>performance considerations<br  /><div class="outline-text-5" id="text-5-1-1-5">
+                <p>
+                  The Radio Timeslot API shares core peripherals with the SoftDevice, and<br  />
+                  application-requested timeslots are scheduled along with other SoftDevice activities.<br  />
+                  Therefore, the use of the Timeslot feature may influence the performance of the<br  />
+                  SoftDevice.<br  />
+                </p>
+
+                <p>
+                  The configuration of the SoftDevice should be considered when using the Radio<br  />
+                  Timeslot API. A configuration which uses more radio time for native protocol<br  />
+                  operation will reduce the available time for serving timeslots and result in<br  />
+                  higher risk of scheduling conflicts.<br  />
+                </p>
+
+                <p>
+                  All Timeslot requests should use the lowest priority to minimize distrubances<br  />
+                  to other activities. At this priority level, only flash writes might be affected.<br  />
+                  The high priority should only be used when required, such as for running a radio<br  />
+                  protocol with certain timing requirements that are not met by using normal priority.<br  />
+                  By using the highest priority available to the Timeslot API, non-critical SoftDevice<br  />
+                  radio protocol traffic may be affected. The SoftDevice radio protocol has access<br  />
+                  to higher priority levels than the application. These levels will be used for<br  />
+                  important radio activity, for instance when the device is about to lose a connection.<br  />
+                </p>
+
+                <p>
+                  Timeslots should be kept as short as possible in order to minimize the impact on<br  />
+                  the overall performance of the device.<br  />
+                </p>
+
+                <p>
+                  It is important to ensure that a timeslot has completed its outstanding operations<br  />
+                  before the time it is scheduled to end, otherwise the SoftDevice behavior is<br  />
+                  undefined and may result in an unrecoverable fault.</p>
+              </div>
+              </li></ol>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
