@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>asteroidos</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Build & Install asteroidos for lg-w100</h1>
+          <time datetime="2017-12-13">Dec 13 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. build steps</a>
+                <ul>
+                  <li><a href="#sec-2-1">2.1. clone main repository</a></li>
+                  <li><a href="#sec-2-2">2.2. setup a build for dory</a></li>
+                  <li><a href="#sec-2-3">2.3. trigger a build</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-3">3. install the built AsteroidOS to lg-w100</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. download the installation files and tools</a></li>
+                  <li><a href="#sec-3-2">3.2. unlock lg-w100 bootloader</a></li>
+                  <li><a href="#sec-3-3">3.3. flash and boot AsteroidOS</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-4">4. error fix</a>
+                <ul>
+                  <li><a href="#sec-4-1">4.1. adb no permissions</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-5">5. base knowledge</a>
+                <ul>
+                  <li><a href="#sec-5-1">5.1. adb</a></li>
+                  <li><a href="#sec-5-2">5.2. fastboot</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li><a href="https://asteroidos.org/wiki/building-asteroidos/">https://asteroidos.org/wiki/building-asteroidos/</a><br  />
+              </li>
+              <li><a href="https://asteroidos.org/install/dory/">https://asteroidos.org/install/dory/</a><br  />
+              </li>
+              <li><a href="https://github.com/AsteroidOS/asteroid">https://github.com/AsteroidOS/asteroid</a><br  />
+              </li>
+              <li><a href="https://github.com/AsteroidOS/AsteroidOSSync">https://github.com/AsteroidOS/AsteroidOSSync</a><br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> build steps</h2>
+          <div class="outline-text-2" id="text-2">
+          </div><div id="outline-container-sec-2-1" class="outline-3">
+            <h3 id="sec-2-1"><span class="section-number-3">2.1</span> clone main repository</h3>
+            <div class="outline-text-3" id="text-2-1">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">git clone https://github.com/AsteroidOS/asteroid.git
+<span style="color: #F92672;">cd</span> asteroid/
+                </pre>
+              </div>
+
+              <p>
+                This repository only contains a shell script that populates src/ with OpenEmbedded<br  />
+                and the appropriate Asteroid layers. Then, it setups the environment for a bitbake<br  />
+                build.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-2-2" class="outline-3">
+            <h3 id="sec-2-2"><span class="section-number-3">2.2</span> setup a build for dory</h3>
+            <div class="outline-text-3" id="text-2-2">
+              <p>
+                dory (the LG G Watch)<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">. ./prepare-build.sh dory
+                </pre>
+              </div>
+
+              <p>
+                If the envrioment has been correctly setup, you should now be in the build<br  />
+                subdirectory. Make sure you have the following build dependencies before starting<br  />
+                a build:<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">git build-essential cpio diffstat gawk chrpath texinfo
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-2-3" class="outline-3">
+            <h3 id="sec-2-3"><span class="section-number-3">2.3</span> trigger a build</h3>
+            <div class="outline-text-3" id="text-2-3">
+              <p>
+                Once the environment is prepared, you can simply trigger a build with the<br  />
+                following command:<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">bitbake asteroid-image
+                </pre>
+              </div>
+
+              <p>
+                After a while, the generated image should be available in build/tmp-glibc/deply/images/dory/.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> install the built AsteroidOS to lg-w100</h2>
+          <div class="outline-text-2" id="text-3">
+          </div><div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> download the installation files and tools</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">sudo apt install android-tools-adb android-tools-fastboot
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-2" class="outline-3">
+            <h3 id="sec-3-2"><span class="section-number-3">3.2</span> unlock lg-w100 bootloader</h3>
+            <div class="outline-text-3" id="text-3-2">
+            </div><div id="outline-container-sec-3-2-1" class="outline-4">
+              <h4 id="sec-3-2-1"><span class="section-number-4">3.2.1</span> enable ADB</h4>
+              <div class="outline-text-4" id="text-3-2-1">
+                <p>
+                  Installing AsteroidOS requires an unlocked bootloader and entering the bootloader<br  />
+                  requires ADB in Android Wear. Enable ADB with the following steps:<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>On the watch, head to Settings &gt; About &gt; and keep tapping on <b>Build number</b> until<br  />
+                    it tells you you are a developer<br  />
+                  </li>
+                  <li>Then swipe back and tap on the new <b>Developer Options</b> under About<br  />
+                  </li>
+                  <li>Tap on <b>ADB Debugging</b> and then select the checkmark to accept it.<br  />
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-3-2-2" class="outline-4">
+              <h4 id="sec-3-2-2"><span class="section-number-4">3.2.2</span> do unlock</h4>
+              <div class="outline-text-4" id="text-3-2-2">
+                <p>
+                  Enter the following commands in a terminal with your watch connected:<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-sh">adb reboot bootloader
+fastboot oem unlock
+                  </pre>
+                </div>
+
+                <p>
+                  Then Follow the instructions on your watch's screen. Please note it may void<br  />
+                  your warranty.<br  />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-3" class="outline-3">
+            <h3 id="sec-3-3"><span class="section-number-3">3.3</span> flash and boot AsteroidOS</h3>
+            <div class="outline-text-3" id="text-3-3">
+              <p>
+                I use the real installation.<br  />
+              </p>
+
+              <p>
+                Enter the build directory of AsteroidOS first.<br  />
+              </p>
+
+              <p>
+                While in <b>FASTBOOT MODE</b>, flash the userdata and boot partitions with<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ fastboot flash userdata ./tmp-glibc/deploy/images/dory/asteroid-image-dory.ext4
+$ fastboot flash boot ./tmp-glibc/deploy/images/dory/zImage-dtb-dory.fastboot
+$ fastboot continue
+                </pre>
+              </div>
+
+              <p>
+                the operation log as below:<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-shell">➜  build git:(next) fastboot flash userdata ./tmp-glibc/deploy/images/dory/asteroid-image-dory.ext4 
+target reported max download size of 268435456 bytes
+Invalid sparse file format at header magi
+erasing 'userdata'...
+OKAY [  3.010s]
+sending sparse 'userdata' (248520 KB)...
+OKAY [  7.931s]
+writing 'userdata'...
+OKAY [ 31.533s]
+sending sparse 'userdata' (94592 KB)...
+OKAY [  3.123s]
+writing 'userdata'...
+OKAY [ 74.941s]
+finished. total time: 120.539s
+➜  build git:(next) fastboot flash boot ./tmp-glibc/deploy/images/dory/zImage-dtb-dory.fastboot 
+target reported max download size of 268435456 bytes
+sending 'boot' (17968 KB)...
+OKAY [  0.680s]
+writing 'boot'...
+OKAY [  1.356s]
+finished. total time: 2.035s
+➜  build git:(next) fastboot continue
+resuming boot...
+OKAY [  0.002s]
+finished. total time: 0.002s
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> error fix</h2>
+          <div class="outline-text-2" id="text-4">
+          </div><div id="outline-container-sec-4-1" class="outline-3">
+            <h3 id="sec-4-1"><span class="section-number-3">4.1</span> adb no permissions</h3>
+            <div class="outline-text-3" id="text-4-1">
+              <p>
+                when i try<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ adb devices
+                </pre>
+              </div>
+
+              <p>
+                I get the result<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">List of devices attached
+????????????    no permissions
+                </pre>
+              </div>
+
+              <p>
+                fix it by using:<br  />
+                Try to restart the Adb server<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">sudo adb kill-server
+sudo adb start-server
+                </pre>
+              </div>
+
+              <p>
+                Then connect your device turn Debugging on.<br  />
+              </p>
+
+              <p>
+                Also try below steps if failed:<br  />
+                You need to provide permission on your Android device.<br  />
+                Go to Settings&gt;Developer options. Try turning Usb Debugging off and then on<br  />
+                again. Remove the cable and reconnect it. Also try deleting all saved<br  />
+                authorizations from Developer options. It should now ask for debugging<br  />
+                permission by a prompt on your phone.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-sec-5" class="outline-2">
+          <h2 id="sec-5"><span class="section-number-2">5</span> base knowledge</h2>
+          <div class="outline-text-2" id="text-5">
+          </div><div id="outline-container-sec-5-1" class="outline-3">
+            <h3 id="sec-5-1"><span class="section-number-3">5.1</span> adb</h3>
+            <div class="outline-text-3" id="text-5-1">
+              <p>
+                The Android Debug Bridge (adb) is a development tool that facilitates communication<br  />
+                between an Android device and a personal computer. ADB consists of a client and<br  />
+                server part each communicating with the other.This communication is most often<br  />
+                done over a USB cable.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-5-2" class="outline-3">
+            <h3 id="sec-5-2"><span class="section-number-3">5.2</span> fastboot</h3>
+            <div class="outline-text-3" id="text-5-2">
+              <p>
+                Fastboot is basically a diagnostic tool used to modify the Android file system<br  />
+                from a computer when the smartphone is in bootloader mode. The commands are<br  />
+                basic, and include, for example, to 'flash' (install) a boot image or a bootloader.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
