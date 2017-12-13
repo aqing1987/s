@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>openwrt</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Openwrt drop cache not work</h1>
+          <time datetime="2017-12-13">Dec 13 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. background</a></li>
+              <li><a href="#sec-3">3. analysis</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. result</a></li>
+                  <li><a href="#sec-3-2">3.2. test steps</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-4">4. base knowledge</a>
+                <ul>
+                  <li><a href="#sec-4-1">4.1. tmpfs</a></li>
+                  <li><a href="#sec-4-2">4.2. `cached' in the top command</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li><a href="https://unix.stackexchange.com/questions/87908/how-do-you-empty-the-buffers-and-cache-on-a-linux-system">https://unix.stackexchange.com/questions/87908/how-do-you-empty-the-buffers-and-cache-on-a-linux-system</a><br  />
+              </li>
+              <li><a href="https://askubuntu.com/questions/198549/what-is-cached-in-the-top-command">https://askubuntu.com/questions/198549/what-is-cached-in-the-top-command</a><br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> background</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              I have a openwrt board with 128M ram, for safely upgrade, the free mem should<br  />
+              kept at least 18MB.<br  />
+            </p>
+
+            <p>
+              So, when I check the free mem is lower than 18MB, I will do the clean cache task:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-c">system(<span style="color: #E6DB74;">"sync"</span>);
+sleep(1);
+system(<span style="color: #E6DB74;">"echo 1 &gt; /proc/sys/vm/drop_caches"</span>);
+system(<span style="color: #E6DB74;">"echo 2 &gt; /proc/sys/vm/drop_caches"</span>);
+system(<span style="color: #E6DB74;">"echo 3 &gt; /proc/sys/vm/drop_caches"</span>);
+sleep(1);
+              </pre>
+            </div>
+
+            <p>
+              but it produce very little effect.<br  />
+            </p>
+
+            <p>
+              The test result as below:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-info">root@xx:~# free; sync; echo 3 &gt; /proc/sys/vm/drop_caches; free
+             total         used         free       shared      buffers
+Mem:        123776       107948        15828            0         1700
+-/+ buffers:             106248        17528
+Swap:            0            0            0
+             total         used         free       shared      buffers
+Mem:        123776       105540        18236            0          204
+-/+ buffers:             105336        18440
+Swap:            0            0            0
+              </pre>
+            </div>
+
+            <p>
+              There are still 45588K mem cached, as below:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-info">Mem: 108076K used, 15700K free, 36264K shrd, 1780K buff, 45588K cached
+              </pre>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> analysis</h2>
+          <div class="outline-text-2" id="text-3">
+          </div><div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> result</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <p>
+                the big files in /tmp (tmpfs) will not be removed by using<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">sync; <span style="color: #F92672;">echo</span> 3 &gt; /proc/sys/vm/drop_caches
+                </pre>
+              </div>
+
+              <p>
+                But the size of big files in /tmp will added to the Cached memory value.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-2" class="outline-3">
+            <h3 id="sec-3-2"><span class="section-number-3">3.2</span> test steps</h3>
+            <div class="outline-text-3" id="text-3-2">
+              <ul class="org-ul">
+                <li>check cached mem<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-info">root@xx:/tmp# top -bn1 | head -n1o
+Mem: 106172K used, 17604K free, 26880K shrd, 5644K buff, 39000K cached
+                    </pre>
+                  </div>
+                </li>
+
+                <li>put big file to /tmp<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-info">root@xx:/tmp# tftp -gr aa.bin  192.168.1.2
+                    </pre>
+                  </div>
+                </li>
+
+                <li>check cached mem again<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-info">root@xx:/tmp# top -bn1 | head -n1
+Mem: 120196K used, 3580K free, 40772K shrd, 5644K buff, 52968K cached
+                    </pre>
+                  </div>
+                </li>
+              </ul>
+
+              <p>
+                Then we know the files in /tmp will increase the cached memory value.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> base knowledge</h2>
+          <div class="outline-text-2" id="text-4">
+          </div><div id="outline-container-sec-4-1" class="outline-3">
+            <h3 id="sec-4-1"><span class="section-number-3">4.1</span> tmpfs</h3>
+            <div class="outline-text-3" id="text-4-1">
+              <p>
+                When I do command below<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">root@xx:/tmp# mount | grep /tmp
+tmpfs on /tmp type tmpfs (rw,nosuid,nodev,noatime)
+                </pre>
+              </div>
+
+              <p>
+                I found that tmpfs mounted in /tmp direcoty.<br  />
+              </p>
+
+              <p>
+                check details from<br  />
+                <a href="https://www.kernel.org/doc/Documentation/filesystems/tmpfs.txt">https://www.kernel.org/doc/Documentation/filesystems/tmpfs.txt</a><br  />
+              </p>
+
+              <p>
+                Tmpfs is a file system which keeps all files in virtual memory.<br  />
+              </p>
+
+              <p>
+                Everything in tmpfs is temporary in the sense that no files will be created on<br  />
+                your hard drive. If you unmount a tmpfs instance, everything stored therein is<br  />
+                lost.<br  />
+              </p>
+
+              <p>
+                tmpfs puts everything into the kernel internal caches and grows and shrinks to<br  />
+                accommodate the files it contains and is able to swap unneeded pages out to swap<br  />
+                space.<br  />
+              </p>
+
+              <p>
+                size: The limit of allocated bytes for this tmpfs instance. The default is half<br  />
+                of your physical RAM without swap. If you oversize your tmpfs instances the<br  />
+                machine will deadlock since the OOM handler will not be able to free that memory.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-2" class="outline-3">
+            <h3 id="sec-4-2"><span class="section-number-3">4.2</span> `cached' in the top command</h3>
+            <div class="outline-text-3" id="text-4-2">
+              <p>
+                when I do command below:<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">root@xx:/tmp# top -bn1 | head -n 1
+Mem: 117232K used, 6544K free, 40040K shrd, 4448K buff, 50924K cached
+                </pre>
+              </div>
+
+              <p>
+                I got the 50924K memory info before `cached'.<br  />
+              </p>
+
+              <p>
+                Cached memory is memory that Linux uses for disk caching.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
