@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>bluetooth</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">nRF52832 SDK14.2.0 advertising tutorial</h1>
+          <time datetime="2017-12-15">Dec 15 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. experiment steps</a>
+                <ul>
+                  <li><a href="#sec-2-1">2.1. change address type</a></li>
+                  <li><a href="#sec-2-2">2.2. change advertising name</a></li>
+                  <li><a href="#sec-2-3">2.3. manufacturer specific data</a></li>
+                  <li><a href="#sec-2-4">2.4. Scan response data</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-3">3. sample code</a></li>
+              <li><a href="#sec-4">4. base knowledge</a>
+                <ul>
+                  <li><a href="#sec-4-1">4.1. Theory about adverting</a></li>
+                  <li><a href="#sec-4-2">4.2. Setting up and start advertising with SoftDevice</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <p>
+              <a href="https://devzone.nordicsemi.com/tutorials/5/">https://devzone.nordicsemi.com/tutorials/5/</a><br  />
+              <a href="https://devzone.nordicsemi.com/blogs/782/bluetooth-smart-and-the-nordics-softdevices-part-1/">https://devzone.nordicsemi.com/blogs/782/bluetooth-smart-and-the-nordics-softdevices-part-1/</a><br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> experiment steps</h2>
+          <div class="outline-text-2" id="text-2">
+          </div><div id="outline-container-sec-2-1" class="outline-3">
+            <h3 id="sec-2-1"><span class="section-number-3">2.1</span> change address type</h3>
+            <div class="outline-text-3" id="text-2-1">
+              <p>
+                check <a href="https://devzone.nordicsemi.com/question/6496/gap-address-types/">https://devzone.nordicsemi.com/question/6496/gap-address-types/</a><br  />
+              </p>
+              <ul class="org-ul">
+                <li>Public address<br  />
+                  This is a global, fixed address. It must be registered with the IEEE Registration<br  />
+                  Authority and will never change during the lifetime of the device.<br  />
+                </li>
+
+                <li>Random Static address<br  />
+                  A random static address is simply a random number that can either be generatd<br  />
+                  every time the device boots up or can stay the same for the lifetime of the<br  />
+                  device. But it cannot be changed within a single power cycle of the device.<br  />
+                </li>
+
+                <li>Private Resolvable address<br  />
+                  Those are generated from an identity resolving key (IRK) and a random number,<br  />
+                  and they can be changed often (even during the lifetime of a connection) to<br  />
+                  avoid the device being identified and tracked by an unknown scanning device.<br  />
+                  Only devices that possess the IRK distributed by the device using a private<br  />
+                  resolvable address can actually resolve that address, allowing the to identify<br  />
+                  the device.<br  />
+                </li>
+
+                <li>Private Non-Resolvable address<br  />
+                  Not very commonly used, a random number that you can change anytime.<br  />
+                </li>
+              </ul>
+
+              <p>
+                The default address type in SoftDevice is "Random Static address". Try to go<br  />
+                into <b>gap_params_init()</b> in main.c and add these code at the end of the function:<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">ble_gap_privacy_params_t</span> <span style="color: #FD971F;">ble_gap_privacy_params</span> = {0};
+ble_gap_privacy_params.privacy_mode = BLE_GAP_PRIVACY_MODE_DEVICE_PRIVACY;
+ble_gap_privacy_params.private_addr_type = BLE_GAP_ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE;
+ble_gap_privacy_params.private_addr_cycle_s = 30;
+ble_gap_privacy_params.p_device_irk = <span style="color: #AE81FF;">NULL</span>;
+err_code = sd_ble_gap_privacy_set(&amp;ble_gap_privacy_params);
+APP_ERROR_CHECK(err_code);
+                </pre>
+              </div>
+              <p>
+                check<br  />
+                <a href="https://devzone.nordicsemi.com/question/111596/how-to-set-ble-gap-address-type-to-random_private_resolvable/">https://devzone.nordicsemi.com/question/111596/how-to-set-ble-gap-address-type-to-random_private_resolvable/</a><br  />
+              </p>
+
+              <p>
+                This Should set the address type to "Private Resolvable address". The Address type<br  />
+                will still show up as "Random", but try to reset your board a few times. You<br  />
+                should see that after each reset your device shows up with a different address<br  />
+                in the device list. However, the mac will not change in my hand, if you know how<br  />
+                to fix it please let me know, thanks.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-2-2" class="outline-3">
+            <h3 id="sec-2-2"><span class="section-number-3">2.2</span> change advertising name</h3>
+            <div class="outline-text-3" id="text-2-2">
+              <p>
+                An advertising packet <b>can consist of no more than 31 bytes</b>.<br  />
+              </p>
+
+              <p>
+                change the advertising name type to Shortened Local Name,<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #F92672;">#define</span> <span style="color: #FD971F;">DEVICE_NAME</span>                <span style="color: #E6DB74;">"ThisIsAReallyLongName"</span>
+
+init.advdata.name_type = BLE_ADVDATA_SHORT_NAME;
+                </pre>
+              </div>
+
+              <p>
+                Then right below this add the line:<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c">init.advdata.short_name_len = 6; <span style="color: #75715E;">// </span><span style="color: #75715E;">Advertise only first 6 letters of name</span>
+                </pre>
+              </div>
+
+              <p>
+                Compile and download again. In the "Discovered devices" list your device should<br  />
+                now show up with the name "ThisIs", the first 6 letters of the full name.<br  />
+                However, if you connect to your device by clicking "Select device", "Connect"<br  />
+                and then "Discover services" you will see that full name is still there.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-2-3" class="outline-3">
+            <h3 id="sec-2-3"><span class="section-number-3">2.3</span> manufacturer specific data</h3>
+            <div class="outline-text-3" id="text-2-3">
+              <div class="org-src-container">
+
+                <pre class="src src-c">init.advdata.p_manuf_specific_data
+                </pre>
+              </div>
+              <p>
+                is a field where you can place whatever data you want.<br  />
+              </p>
+
+              <p>
+                add code below to advertising_init():<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c">
+    <span style="color: #75715E;">// </span><span style="color: #75715E;">variable to hold manufacturer specific data</span>
+    <span style="color: #66D9EF;">ble_advdata_manuf_data_t</span> <span style="color: #FD971F;">manuf_data</span>;
+
+    <span style="color: #66D9EF;">uint8_t</span> <span style="color: #FD971F;">data</span>[] = <span style="color: #E6DB74;">"SomeData!"</span>; <span style="color: #75715E;">// </span><span style="color: #75715E;">our data to advertise</span>
+    manuf_data.company_identifier = 0x0059; <span style="color: #75715E;">// </span><span style="color: #75715E;">Nordics company ID</span>
+    manuf_data.data.p_data = data;
+    manuf_data.data.size = <span style="color: #F92672;">sizeof</span>(data);
+
+    init.advdata.p_manuf_specific_data = &amp;manuf_data;
+                </pre>
+              </div>
+
+              <p>
+                Now compile, download and check. You can see that there is a new field in the<br  />
+                "Advertising Data" list called "Manufacturer data". It contains a cryptic string<br  />
+                of hexadecimal numbers. The first two numbers are the compnay ID (0x0059) with the<br  />
+                least significant byte first. The company ID is a unique 16-bit value assigned<br  />
+                to Bluetooth SIG members. It is not allowed to broadcast a custom company ID<br  />
+                value without being a member. If you are curious you can see a list of the<br  />
+                Bluetooth SIG member IDs from:<br  />
+                <a href="https://www.bluetooth.org/en-us/specification/assigned-numbers/company-identifiers">https://www.bluetooth.org/en-us/specification/assigned-numbers/company-identifiers</a><br  />
+              </p>
+
+              <p>
+                As described at the bottom of the page the value 0xFFFF "may be used in the internal<br  />
+                and interoperability tests before a Company ID has been assigned. This value<br  />
+                shall not be used in shipping and products". When you are ready for shipping<br  />
+                you need to apply for a Bluetooth SIG membership to get your own unique ID.<br  />
+                "Adopter level" membership is free, but you will need to be associated with<br  />
+                a valid company. The next 10 bytes in the manufacturer specific data field are<br  />
+                the actual data. If you compare with an ASCII table you will recognize the<br  />
+                string "SomeData!", most significatnt byte first this time. The last two zeros<br  />
+                at the end represent a termination character in the string.<br  />
+              </p>
+            </div>
+
+            <div id="outline-container-sec-2-3-1" class="outline-4">
+              <h4 id="sec-2-3-1"><span class="section-number-4">2.3.1</span> add transmit power to advdata</h4>
+              <div class="outline-text-4" id="text-2-3-1">
+                <p>
+                  This value might, e.g., enable other units to roughly estimate the distance to<br  />
+                  your device. (keep in mind that you will have to use one of the valid tx power<br  />
+                  levels in nRF52 Product Specification). It is also important to know that this<br  />
+                  doesn't change the actual transmit power, just the information that is advertised.<br  />
+                </p>
+
+                <p>
+                  add code below in advertising_init()<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c"><span style="color: #66D9EF;">int8_t</span> <span style="color: #FD971F;">tx_power</span> = 0x04;
+
+init.advdata.short_name_len = 2;
+init.advdata.p_tx_power_level = &amp;tx_power;
+                  </pre>
+                </div>
+
+                <p>
+                  <b>Note:</b> To add the tx power level according to the TLV format, (Type: 1B, Length: 1B,<br  />
+                  Value: 1B) at least 3 Bytes needed, the content size should &lt;= 31 bytes. So, we<br  />
+                  change the name length to 2. You can check:<br  />
+                  <a href="https://devzone.nordicsemi.com/question/37952/setting-tx_power_level/">https://devzone.nordicsemi.com/question/37952/setting-tx_power_level/</a><br  />
+                </p>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-2-3-2" class="outline-4">
+              <h4 id="sec-2-3-2"><span class="section-number-4">2.3.2</span> set the "include_appearance" field in "advdata"</h4>
+              <div class="outline-text-4" id="text-2-3-2">
+                <p>
+                  set code below in advertising_init()<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c">init.advdata.include_appearance = <span style="color: #AE81FF;">true</span>;
+                  </pre>
+                </div>
+
+                <p>
+                  set code below in gap_params_init()<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c">err_code = sd_ble_gap_appearance_set(BLE_APPEARANCE_HID_MOUSE);
+APP_ERROR_CHECK(err_code);
+                  </pre>
+                </div>
+
+                <p>
+                  The appearance feature might be useful to developers of e.g. mobile phone apps.<br  />
+                  If you have a BLE enabled phone (or a laptop) your kit should now show up with<br  />
+                  the name "Th" and a computer mouse icon if you search for BLE devices.<br  />
+                </p>
+
+                <p>
+                  <b>Tips:</b> Your advertisement packet is already getting dangerously full so you<br  />
+                  might want to shorten your manufacturer data size or device name.<br  />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-2-4" class="outline-3">
+            <h3 id="sec-2-4"><span class="section-number-3">2.4</span> Scan response data</h3>
+            <div class="outline-text-3" id="text-2-4">
+              <p>
+                But what if you really, really want to advertise more than 31 bytes? Then there<br  />
+                is a solution for you and that is the Scan response data. This is an optional<br  />
+                "secondary" advertising payload which allows scanning devices that detect an<br  />
+                advertising device to request a second advertising packet. This allows you to<br  />
+                send two advertising frames with a total payload of 62 bytes.<br  />
+              </p>
+
+              <p>
+                add code below in advertising_init()<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #66D9EF;">ble_advdata_manuf_data_t</span> <span style="color: #FD971F;">manuf_data_response</span>;
+memset(&amp;manuf_data_response, 0, <span style="color: #F92672;">sizeof</span>(manuf_data_response));
+
+<span style="color: #66D9EF;">uint8_t</span> <span style="color: #FD971F;">data_response</span>[] = <span style="color: #E6DB74;">"my hello response"</span>;
+manuf_data_response.company_identifier = 0x0059;
+manuf_data_response.data.p_data = data_response;
+manuf_data_response.data.size = <span style="color: #F92672;">sizeof</span>(data_response);
+
+init.srdata.name_type = BLE_ADVDATA_NO_NAME;
+init.srdata.p_manuf_specific_data = &amp;manuf_data_response;
+                </pre>
+              </div>
+
+              <p>
+                compile, download and see what happens.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> sample code</h2>
+          <div class="outline-text-2" id="text-3">
+            <p>
+              download the sample code from<br  />
+              <a href="https://github.com/aqing1987/s-bt/tree/master/nRF52832/s_ble_app_advertising_tutorial">https://github.com/aqing1987/s-bt/tree/master/nRF52832/s_ble_app_advertising_tutorial</a><br  />
+            </p>
+
+            <p>
+              then put it into the directoy<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">nRF5_SDK_14.2.0_17b948a/examples/ble_peripheral
+              </pre>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> base knowledge</h2>
+          <div class="outline-text-2" id="text-4">
+            <p>
+              Bluetooth Smart defined 4 GAP roles: Broadcaster, Observer, Central, Peripheral<br  />
+              [Section 6.2 Vol 1 Part A] and 5 Link layer states: Standby, Advertising,<br  />
+              Scanning, Initiating, Connection [Section 1.1 Vol 6 Part B]. One device may have<br  />
+              one or multiple roles, working in one or multiple states at the same time.<br  />
+            </p>
+
+            <p>
+              In this episode we focus on Advertising state of the Broadcaster and the Peripheral.<br  />
+            </p>
+          </div>
+
+          <div id="outline-container-sec-4-1" class="outline-3">
+            <h3 id="sec-4-1"><span class="section-number-3">4.1</span> Theory about adverting</h3>
+            <div class="outline-text-3" id="text-4-1">
+            </div><div id="outline-container-sec-4-1-1" class="outline-4">
+              <h4 id="sec-4-1-1"><span class="section-number-4">4.1.1</span> what is advertising</h4>
+              <div class="outline-text-4" id="text-4-1-1">
+                <p>
+                  Advertising is the act of broadcasting data. We broadcast data for device discovery<br  />
+                  and data publishing. There are 2 types of data packets that can be transmitted,<br  />
+                  Advertising packet and Scan Response packet, each can have up to 31 bytes payload.<br  />
+                  The advertiser address is included in the broadcast data in addition to the payload.<br  />
+                </p>
+
+                <p>
+                  The advertiser constantly broadcasts advertising packets with an advertising interval.<br  />
+                  Advertising interval can be changed on the fly. There is a requirement for minimum and<br  />
+                  maximum advertising interval.<br  />
+                </p>
+
+                <p>
+                  For normal, undirected advertising, the advertising intervals ranges from 20ms<br  />
+                  to 10.24s (Section 7.8.5 Part E Vol2)<br  />
+                </p>
+
+                <p>
+                  The scan response packet is transmitted by the advertiser when it receives a scan<br  />
+                  request from a scanner. The advertiser have to enter a RX period to wait for the<br  />
+                  scan request. This RX period can be used to receive Connect Request as well.<br  />
+                </p>
+
+                <p>
+                  In some applications when we don't expect a connection and don't have extra data<br  />
+                  in scan response packet, we can advertise in non-connectable mode and can skip<br  />
+                  the RX period to save power. The beacon application is one of the use cases.<br  />
+                </p>
+
+                <p>
+                  Note that all Advertising packet, Scan Request packet, Scan Response packet share<br  />
+                  the same on-air Access Address = <b>0x8E89BED6</b>. This common address allows any<br  />
+                  device to scan and receive advertising/scan response data.<br  />
+                </p>
+
+                <p>
+                  Bluetooth Smart uses 40 RF channels in the ISM band (2.4GHz). These RF channels<br  />
+                  have center frequencies 2402 + K*2MHz where k ranges from 0 to 39. Note that k<br  />
+                  is not the same as "Channel Index", or channel number (Section 1.4 Vol 6 Part B).<br  />
+                </p>
+
+                <p>
+                  Three of them is dedicated for advertising which is channel 37 (2402MHz), 38(2426MHz),<br  />
+                  and 39 (2480MHz). They were selected to avoid interference with the busy channels<br  />
+                  used by Wifi.<br  />
+                </p>
+
+                <p>
+                  In the implementation of SoftDevice stack, by default it transmit the advertising<br  />
+                  packet in all 3 channels on every advertising event, on channel 37, 38, 39 respectively.<br  />
+                </p>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-4-1-2" class="outline-4">
+              <h4 id="sec-4-1-2"><span class="section-number-4">4.1.2</span> Broadcast topology</h4>
+              <div class="outline-text-4" id="text-4-1-2">
+                <p>
+                  When advertising, the network topology is Broadcast topology. There could be<br  />
+                  multiple advertisers and multiple scanner at the same time.<br  />
+                </p>
+
+                <p>
+                  Note that one device can do scanning and adverting simultaneously. And one can<br  />
+                  be in a connection with a central or peripheral and can do advertising at the<br  />
+                  same time.<br  />
+                </p>
+
+                <p>
+                  The only packet the active scanner can send to advertiser is the Scan Request<br  />
+                  packet, which contain only the scanner address. Passive scanner doesn't do<br  />
+                  Scan Request.<br  />
+                </p>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-4-1-3" class="outline-4">
+              <h4 id="sec-4-1-3"><span class="section-number-4">4.1.3</span> Advertising types and whitelisting</h4>
+              <div class="outline-text-4" id="text-4-1-3">
+                <p>
+                  There are 4 defined types of Advertising (Section 2.3.1 Vol 6 Part B)<br  />
+                </p>
+
+                <ul class="org-ul">
+                  <li>ADV_IND: <b>connectable undirected advertising</b>. This is the normal advertising<br  />
+                    type where any device can send scan response packet and connect request to<br  />
+                    the advertiser.<br  />
+                  </li>
+                </ul>
+
+
+                <ul class="org-ul">
+                  <li>ADV_DIRECT_IND: <b>connectable directed advertising</b>. You use this to direct your<br  />
+                    advertise packet to one specific central to ask for connection. The packet is<br  />
+                    still a broadcast packet but other scanners will ignore the packet if the peer<br  />
+                    address is not matched with them. And connect request or scan request from<br  />
+                    unmatched central will be ignored by the advertiser. Directed advertising usually<br  />
+                    comes with high duty cycle with interval fix at 3.75ms. For low duty cycle directed<br  />
+                    advertising, it's configurable and should be &lt;10ms. (Section 4.4.2 Part B Vol6)<br  />
+                  </li>
+                </ul>
+
+
+                <ul class="org-ul">
+                  <li>ADV_SCAN_IND: <b>scannable undirected advertising</b>. This advertising packet won't<br  />
+                    accept connect request but accept scan request.<br  />
+                  </li>
+                </ul>
+
+
+                <ul class="org-ul">
+                  <li>ADV_NONCONN_IND: <b>non-connectable undirected advertising</b>. This is non RX mode,<br  />
+                    which mean the advertiser will not accept any connect request or scan request.<br  />
+                    Staying in this mode the advertiser doesn't need to switch to receiver mode<br  />
+                    and can save power. The main application for this is beacon application, where<br  />
+                    maximize battery life time is most important and the beacon doesn't need to<br  />
+                    interact with the scanner.<br  />
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-4-1-4" class="outline-4">
+              <h4 id="sec-4-1-4"><span class="section-number-4">4.1.4</span> Advertise with Whitelist</h4>
+              <div class="outline-text-4" id="text-4-1-4">
+                <p>
+                  The advertiser can use a whitelist to limit the interaction to a number of scanner/central<br  />
+                  device. The whitelist contains an array of the peer device addresses or IRK numbers<br  />
+                  (when central use resolvable random address). It will reject packets from scanners/centrals<br  />
+                  whose addresses are not in the list. Whitelist can be configured to filter scan<br  />
+                  request packets, connect request packets or both.<br  />
+                </p>
+              </div>
+            </div>
+            <div id="outline-container-sec-4-1-5" class="outline-4">
+              <h4 id="sec-4-1-5"><span class="section-number-4">4.1.5</span> bonded</h4>
+              <div class="outline-text-4" id="text-4-1-5">
+                <p>
+                  This shows whether the device is bonded to another device or not. The purpose<br  />
+                  of bonding is:<br  />
+                </p>
+                <blockquote>
+                  <p>
+                    The purpose of bonding is to create a relation between two Bluetooth devices<br  />
+                    based on a common link key (a bond). The link key is created and exchanged<br  />
+                    (pairing) during the bonding procedure and is expecteed to be stored by both<br  />
+                    Bluetooth devices, to be used for future authentication.<br  />
+                  </p>
+                </blockquote>
+              </div>
+            </div>
+          </div>
+          <div id="outline-container-sec-4-2" class="outline-3">
+            <h3 id="sec-4-2"><span class="section-number-3">4.2</span> Setting up and start advertising with SoftDevice</h3>
+            <div class="outline-text-3" id="text-4-2">
+            </div><div id="outline-container-sec-4-2-1" class="outline-4">
+              <h4 id="sec-4-2-1"><span class="section-number-4">4.2.1</span> APIs provided by the softdevice:</h4>
+              <div class="outline-text-4" id="text-4-2-1">
+                <ul class="org-ul">
+                  <li>set, clear or update advertising data and the scan response data<br  />
+                    <div class="org-src-container">
+
+                      <pre class="src src-c">sd_ble_gap_adv_data_set(<span style="color: #66D9EF;">uint8_t</span> <span style="color: #F92672;">const</span>* <span style="color: #FD971F;">p_data</span>, <span style="color: #66D9EF;">uint8_t</span> <span style="color: #FD971F;">dlen</span>, <span style="color: #66D9EF;">uint8_t</span> <span style="color: #F92672;">const</span>* <span style="color: #FD971F;">p_sr_data</span>, <span style="color: #66D9EF;">uint8_t</span> <span style="color: #FD971F;">srdlen</span>)
+                      </pre>
+                    </div>
+                  </li>
+
+                  <li>start advertising<br  />
+                    <div class="org-src-container">
+
+                      <pre class="src src-c">sd_ble_gap_adv_start(<span style="color: #66D9EF;">ble_gap_adv_params_t</span> <span style="color: #F92672;">const</span>* <span style="color: #FD971F;">p_adv_params</span>, <span style="color: #66D9EF;">uint8_t</span> <span style="color: #FD971F;">conn_cfg_tag</span>)
+                      </pre>
+                    </div>
+                  </li>
+                </ul>
+
+                <p>
+                  &#x2014;<br  />
+                  Check how the 31 bytes Advertising data and Scan reponse data should look like<br  />
+                  (chapter 11, part C, vol3)<br  />
+                </p>
+
+                <p>
+                  It's up to the application to prepare the advertising data and set it in the<br  />
+                  softdevice using <b>sd_ble_gap_adv_data_set()</b>.<br  />
+                </p>
+
+                <p>
+                  Note:<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>The data in the input parameter is an array of uint8_t. You need to encode data<br  />
+                    to match with this.<br  />
+                  </li>
+                  <li>You should set the length of the advertising data (dlen) to match with the significant<br  />
+                    part length so that the non-significant part (zero padding) will not be transferred<br  />
+                    over the air.<br  />
+                  </li>
+                  <li>31 bytes includes also the overhead so the actual payload for application is<br  />
+                    27 bytes when using manufacturing data type.<br  />
+                  </li>
+                  <li>Flags can only be excluded if non-connectable advertising is used.<br  />
+                  </li>
+                </ul>
+                <p>
+                  &#x2014;<br  />
+                </p>
+
+                <p>
+                  After you have set-up the advertising packet you can tell the softdevice to start<br  />
+                  advertising by calling <b>sd_ble_gap_adv_start()</b>. For this call, you need to configure:<br  />
+                </p>
+
+                <ul class="org-ul">
+                  <li>Advertising interval (the period between each advertising)<br  />
+                  </li>
+                  <li>Advertising timeout: how long you want to advertise. You will receive<br  />
+                    BLE_GAP_EVT_TIMEOUT event after this timeout.<br  />
+                  </li>
+                  <li>Advertising types (connectable, non-connectable, directed, etc)<br  />
+                  </li>
+                  <li>The peer address if you do directed advertising<br  />
+                  </li>
+                  <li>The whitelist list if you have<br  />
+                  </li>
+                  <li>Filter policy: Choose how to use the whitelist, filter scan request, connect<br  />
+                    request or both<br  />
+                  </li>
+                  <li>Channel(s) you want to advertise, you can choose one or two or all 3 channels<br  />
+                    to advertise<br  />
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-4-2-2" class="outline-4">
+              <h4 id="sec-4-2-2"><span class="section-number-4">4.2.2</span> GAP events you may receive when advertising</h4>
+              <div class="outline-text-4" id="text-4-2-2">
+                <ul class="org-ul">
+                  <li>BLE_GAP_EVT_TIMEOUT<br  />
+                    Occurs when the advertising timeout is passed. The application can decide to<br  />
+                    continue advertising in different mode or to enter sleep mode. The application<br  />
+                    should check the src parameter to check if the timeout event is from adverting<br  />
+                    timeout or not.<br  />
+                  </li>
+                </ul>
+
+
+                <ul class="org-ul">
+                  <li>BLE_GAP_EVT_SCAN_REQ_REPORT<br  />
+                    the application receives this event when there is a scan request received by<br  />
+                    the advertiser. The event comes with address of the peer device and RSSI value.<br  />
+                    Note: you only get this event if you enable it using the option API<br  />
+                    sd_ble_opt_set()<br  />
+                  </li>
+                </ul>
+
+
+                <ul class="org-ul">
+                  <li>BLE_GAP_EVT_CONNECTED<br  />
+                    You receive this when there is a central device send connect request and the<br  />
+                    connection is established.<br  />
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-4-2-3" class="outline-4">
+              <h4 id="sec-4-2-3"><span class="section-number-4">4.2.3</span> FAQ</h4>
+              <div class="outline-text-4" id="text-4-2-3">
+                <ul class="org-ul">
+                  <li>Why am I seeing the advertising period is not the same between each packet?<br  />
+                    Bluetooth spec defined a random delay (0~10ms) on each advertising peroid<br  />
+                    to perturb interval and avoid interference (Section 4.4.2.2 part B vol6)<br  />
+                  </li>
+
+                  <li>If I want to advertise my custom data how should I put it in the advertising packet?<br  />
+                    You should use Manufacturer Specific Data ADtype (0xFF). Note that with that<br  />
+                    type, the 2 first bytes are for Company ID.<br  />
+                    check:<br  />
+                    <a href="https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile">https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile</a><br  />
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
