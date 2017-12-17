@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>shell</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Shell basic</h1>
+          <time datetime="2017-12-17">Dec 17 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. get into the shell</a>
+                <ul>
+                  <li><a href="#sec-1-1">1.1. Command Line Interface</a></li>
+                  <li><a href="#sec-1-2">1.2. shell single quote</a></li>
+                  <li><a href="#sec-1-3">1.3. curl</a></li>
+                  <li><a href="#sec-1-4">1.4. cowsay</a></li>
+                  <li><a href="#sec-1-5">1.5. the terminal vs the shell</a></li>
+                  <li><a href="#sec-1-6">1.6. try more commands</a></li>
+                  <li><a href="#sec-1-7">1.7. what is a shell command</a></li>
+                  <li><a href="#sec-1-8">1.8. reading the output of a command</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-2">2. shell commands</a>
+                <ul>
+                  <li><a href="#sec-2-1">2.1. filenames and contents</a></li>
+                  <li><a href="#sec-2-2">2.2. command history</a></li>
+                  <li><a href="#sec-2-3">2.3. some common commands</a></li>
+                  <li><a href="#sec-2-4">2.4. manual pages</a></li>
+                  <li><a href="#sec-2-5">2.5. researching commands</a></li>
+                  <li><a href="#sec-2-6">2.6. line based programs</a></li>
+                  <li><a href="#sec-2-7">2.7. waiting for input</a></li>
+                  <li><a href="#sec-2-8">2.8. full screen interactive programs: less</a></li>
+                  <li><a href="#sec-2-9">2.9. editing files in nano</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-3">3. the linux filesystem</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. the filesystem tree</a></li>
+                  <li><a href="#sec-3-2">3.2. the working directory</a></li>
+                  <li><a href="#sec-3-3">3.3. absolute and relative paths</a></li>
+                  <li><a href="#sec-3-4">3.4. cd without args</a></li>
+                  <li><a href="#sec-3-5">3.5. cd to not a dirctory</a></li>
+                  <li><a href="#sec-3-6">3.6. tab completion</a></li>
+                  <li><a href="#sec-3-7">3.7. globbing</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> get into the shell</h2>
+          <div class="outline-text-2" id="text-1">
+          </div><div id="outline-container-sec-1-1" class="outline-3">
+            <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Command Line Interface</h3>
+            <div class="outline-text-3" id="text-1-1">
+              <p>
+                Any computer interface where the user enters textual commands and gets textual<br  />
+                responses is a CLI.<br  />
+              </p>
+
+              <p>
+                The terminal interface uses text instead of graphics.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-1-2" class="outline-3">
+            <h3 id="sec-1-2"><span class="section-number-3">1.2</span> shell single quote</h3>
+            <div class="outline-text-3" id="text-1-2">
+              <p>
+                When you get something like this, with a right angle bracket:<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">aa@aa~$ alice<span style="color: #E6DB74;">'s tea party</span>
+<span style="color: #E6DB74;">&gt;</span>
+                </pre>
+              </div>
+
+              <p>
+                That'll happen if you type something with a single quote mark, or with a parenthesis,<br  />
+                or brace.<br  />
+                In order to get your shell prompt back, with an arrow message, you have to type<br  />
+                the matching quote mark, or parenthesis, or brace. Then you'll get a command not<br  />
+                found and you get your show prompt back.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-1-3" class="outline-3">
+            <h3 id="sec-1-3"><span class="section-number-3">1.3</span> curl</h3>
+            <div class="outline-text-3" id="text-1-3">
+              <p>
+                curl is a command for downloading files from the web.<br  />
+                e.g.<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">curl http://udacity.github.io/ud595-shell/stuff.zip -o things.zip
+                </pre>
+              </div>
+            </div>
+          </div>
+          <div id="outline-container-sec-1-4" class="outline-3">
+            <h3 id="sec-1-4"><span class="section-number-3">1.4</span> cowsay</h3>
+            <div class="outline-text-3" id="text-1-4">
+              <p>
+                A funny terminal tool. You should install it before using.<br  />
+              </p>
+
+              <p>
+                and try:<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ cowsay hello, world!
+                </pre>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-1-5" class="outline-3">
+            <h3 id="sec-1-5"><span class="section-number-3">1.5</span> the terminal vs the shell</h3>
+            <div class="outline-text-3" id="text-1-5">
+              <p>
+                The terminal is a program that draws text in a window, and lets you type things<br  />
+                in on a keyboard. Technically it's called a terminal emulator, since it acts<br  />
+                like one of those old school hardware terminals. It displays output on the screen<br  />
+                and it accepts input from the keyboard.<br  />
+              </p>
+
+              <p>
+                But the terminal itself doesn't know what to do with that input. It needs another<br  />
+                program to do that. In this case, that program is the shell. When you type things<br  />
+                in the terminal just sends what you type to that separate program. When you press<br  />
+                Enter, the shell interprets what you wrote as a command, figures out what program<br  />
+                you want to run, runs it and sends the output back to the terminal so you can see<br  />
+                it.<br  />
+              </p>
+
+              <p>
+                You could actually use the terminal without the shell, with a log of terminal<br  />
+                programs you can tell it what program to run. The default is a shell, but you can<br  />
+                have it run say, the Python interpreter instead.<br  />
+              </p>
+
+              <p>
+                Also, there are actually a log of different shell programs that you can choose<br  />
+                from. The default one on most Linux systems, and on the Mac, is called GNU Bash.<br  />
+                But there are others called TCSH, KSH and Seashell. They all work slightly differently<br  />
+                and have various different features.<br  />
+              </p>
+
+              <p>
+                And you can also use a shell without the terminal, sort of. You can wirte shell<br  />
+                commands into a file and arrange for your computer to run the shell program on<br  />
+                that file. This is called shell scripting.<br  />
+              </p>
+            </div>
+
+            <div id="outline-container-sec-1-5-1" class="outline-4">
+              <h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> different shells</h4>
+              <div class="outline-text-4" id="text-1-5-1">
+                <p>
+                  Unix and Linux programmers over the years have written many different shell<br  />
+                  programs. You can read more about them on Wikipedia: the original Bourne shell<br  />
+                  or sh; the C shell or csh; the Korn shell or ksh; the Z shell or zsh; as well<br  />
+                  as the bash shell.<br  />
+                </p>
+
+                <p>
+                  Different systems may have different shells installed by default. Most Linux<br  />
+                  systems, and Mac OS X, default to bash for interactive shells. However, the most<br  />
+                  common default shell for scripting (shell programming) is classic sh. BSD Unix<br  />
+                  systems usually default to sh or ksh.<br  />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-1-6" class="outline-3">
+            <h3 id="sec-1-6"><span class="section-number-3">1.6</span> try more commands</h3>
+            <div class="outline-text-3" id="text-1-6">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ date
+                </pre>
+              </div>
+
+              <p>
+                hostname prints out the computer's own name for itself<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ hostname
+                </pre>
+              </div>
+
+              <p>
+                host is pretty different from hostname. It looks up a name in the DNS or<br  />
+                domain name srvice to find out its IP address and also other information.<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">host baidu.com
+                </pre>
+              </div>
+
+              <p>
+                the expr command is a simple calculator<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ expr 2 + 2
+                </pre>
+              </div>
+
+              <p>
+                echo is just the shells name for the print statement, it just repeats back<br  />
+                whatever you give it, like an echo.<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ echo you rock
+                </pre>
+              </div>
+
+              <p>
+                tells you what version number of the bash shell you have installed<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ bash --version
+                </pre>
+              </div>
+
+              <p>
+                the history command tells you all the commands you've run previously.<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ history
+                </pre>
+              </div>
+
+              <p>
+                uname prints out the operating system's name for itself, you can get a lot<br  />
+                more information with uname -a, by the way.<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ uname
+                </pre>
+              </div>
+            </div>
+          </div>
+          <div id="outline-container-sec-1-7" class="outline-3">
+            <h3 id="sec-1-7"><span class="section-number-3">1.7</span> what is a shell command</h3>
+            <div class="outline-text-3" id="text-1-7">
+              <p>
+                When you have used programming languages before such as Python or JavaScript,<br  />
+                you've been exposed to concepts such as function and statement. Commands that<br  />
+                you run at the shell prompt are a little bit like function calls.<br  />
+              </p>
+
+              <p>
+                You could even do some of the same things in the shell and in code, like the<br  />
+                command to delete a file in the shell is rm, which stands for remove And it<br  />
+                works like this. And you could do the same thing in Python with the remove<br  />
+                function in the OS module, os.remove.<br  />
+              </p>
+
+              <p>
+                A shell command and a python function have a lot in common. They're both units<br  />
+                of code, they both have a name, and they can both take arguments. But, they<br  />
+                exist in pretty different contexts. Most commands that you run in the Shell are<br  />
+                actually whole programs that are started up as separate processes on your computer.<br  />
+              </p>
+
+              <p>
+                Running a shell command in your terminal is a lot like calling a function in a<br  />
+                program. But the two techniques are used in different ways. Functions are used<br  />
+                to organize a program while Shell Commands are used to run programs. Since shell<br  />
+                commands output their results in text, it's easy to read and understand what's<br  />
+                going on.<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-1-8" class="outline-3">
+            <h3 id="sec-1-8"><span class="section-number-3">1.8</span> reading the output of a command</h3>
+            <div class="outline-text-3" id="text-1-8">
+              <p>
+                When using the shell, no news is usually good news.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> shell commands</h2>
+          <div class="outline-text-2" id="text-2">
+          </div><div id="outline-container-sec-2-1" class="outline-3">
+            <h3 id="sec-2-1"><span class="section-number-3">2.1</span> filenames and contents</h3>
+            <div class="outline-text-3" id="text-2-1">
+              <p>
+                Linux is really flexible about file names. There's no hard rule that a particular<br  />
+                kind of file has to have a particular kind of name. The file system doesn't require<br  />
+                that files have extensions on the end of their names. If you're coming from Windows,<br  />
+                that can be a big change. You can see for instance, a file called readme instead of<br  />
+                readme.txt, but it's still a text file. But just as on other systems, there are<br  />
+                conventions. If you don't know what a file is, you can use your favorite search<br  />
+                engine to look up the extension on the end of the file name. Or, if there isn't<br  />
+                one, the whole file name and maybe something about the context. So, given what<br  />
+                you already know, and what you can find with some quick searching, see if you can<br  />
+                say what each of these files is likely to be. What type of things do you expect<br  />
+                to find in each of these files?<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-info">Hello-Kitty.jpg    - photograph
+LICENSE            - plain text
+README.md          - markdown document
+superuser.pem      - crypto key
+install.sh         - shell script
+                </pre>
+              </div>
+            </div>
+          </div>
+          <div id="outline-container-sec-2-2" class="outline-3">
+            <h3 id="sec-2-2"><span class="section-number-3">2.2</span> command history</h3>
+            <div class="outline-text-3" id="text-2-2">
+              <p>
+                If you type a command and you don't get it right, or if you just want to recall<br  />
+                something that you've used before, try using the up arrow key. The shell keeps<br  />
+                a history of commands that you've run so you can walk back through them using<br  />
+                the arrow keys. Then you can edit a previous command line that you've used and<br  />
+                maybe get some more success.<br  />
+              </p>
+
+              <p>
+                There are a couple of other ways to access the shell history. One of them you've<br  />
+                seen is the command <b>history</b>, which points out the whole history. This doesn't<br  />
+                just include history from the current shell session, you can also see commands<br  />
+                you ran in the past.<br  />
+              </p>
+
+              <p>
+                Another one is the keystroke <b>control R</b>. This is a special function, called<br  />
+                reverse i search, which lets you search your shell history. This is awfully handy<br  />
+                if you used some command long ago or just yesterday and it's long command and<br  />
+                you want to recall it now.<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-2-3" class="outline-3">
+            <h3 id="sec-2-3"><span class="section-number-3">2.3</span> some common commands</h3>
+            <div class="outline-text-3" id="text-2-3">
+              <ul class="org-ul">
+                <li>ls<br  />
+                  ls lists the files in the current directory.<br  />
+                </li>
+
+                <li>unzip<br  />
+                  The unzip command typically takes one argument. The file name of the file<br  />
+                  to unzip. As it works, unzip lists the files and directories it's uncompressing.<br  />
+                </li>
+
+                <li>cat<br  />
+                  give cat a list of file names and it'll print out the contents of the files.<br  />
+                  You can also use cat to read a single file. Just give it one file name. A lot<br  />
+                  of people use cat as their go to command for reading short files.<br  />
+                </li>
+
+                <li>wc<br  />
+                  wc is the word count program. It tells us how many lines, words, and bytes are<br  />
+                  in a file.<br  />
+                </li>
+
+                <li>diff<br  />
+                  diff compares files and shows you how they differ. This can be useful if you<br  />
+                  have multiple versions or editions of the same file and you want to know what<br  />
+                  changes have been made.<br  />
+                </li>
+              </ul>
+            </div>
+          </div>
+
+
+          <div id="outline-container-sec-2-4" class="outline-3">
+            <h3 id="sec-2-4"><span class="section-number-3">2.4</span> manual pages</h3>
+            <div class="outline-text-3" id="text-2-4">
+              <p>
+                There's a lot to remember when using the terminal. You can't just click around<br  />
+                and explore menus like you can with a graphical program. This doesn't mean that<br  />
+                you need to remember every command and every option though. Looking things up<br  />
+                is a regular part of the terminal user's workflow. In fact, it's normal to forget<br  />
+                the details of commands you don't use frequently.<br  />
+              </p>
+
+              <p>
+                Cowsay is an example of a program with a bunch of options. By default, cowsay<br  />
+                draws a cow, but you can customize it too. For example, by using the -e argument,<br  />
+                we can replace its eyes with carets. We can also draw a penguin instead of a cow.<br  />
+                So, how do we keep up with all these options? Fortunately, all common shell programs<br  />
+                come with a manual, and there's a command that makes it easy to read them, man.<br  />
+                Manual entries are called man pages, and this is cowsay's man page. Man pages<br  />
+                follow a common format. The first section includes the command's name and a brief<br  />
+                description of the command. The next section is the synopsis. The synopsis explains<br  />
+                how to use the command's flags and arguments. Options surrounded by square brackets<br  />
+                are optional. In this case, all of cowsay's options are optional. Some options<br  />
+                require additional information. For example, if you use the -e flag, you also<br  />
+                need to supply an eye_string. The description describes all of the options in<br  />
+                detail. Man pages vary in how they present this information. Some man pages alphabetize<br  />
+                their option, while cowsay's man page is a bit less organized. You can use the<br  />
+                arrow keys to scroll up and down the man page. The later sections of the man page<br  />
+                include more detailed information about the command.<br  />
+              </p>
+
+              <p>
+                Man pages are typically arranged so that the most important details are near the top.<br  />
+                When you're done referencing the manual, you can press q to exit.<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-2-5" class="outline-3">
+            <h3 id="sec-2-5"><span class="section-number-3">2.5</span> researching commands</h3>
+            <div class="outline-text-3" id="text-2-5">
+              <p>
+                There are a lot of other resources besides the manual for finding out about<br  />
+                shell command stuff. Even experienced users can always find something new that<br  />
+                can be done in the shell. But if you don't know what a command does and you're<br  />
+                not sure if you want to run it, applying your favorite search engine to the<br  />
+                problem is a good idea. You can put any shell command into Google or DuckDuckGo<br  />
+                or Yahoo or whatever and usually find a lot of help.<br  />
+              </p>
+
+              <p>
+                Another useful tool for researching commands is the <b>aprops</b> command. You can<br  />
+                use <b>aprops</b> to find commands relevant to particular keywords.<br  />
+              </p>
+
+              <p>
+                For example <b>aprops working directory</b> provides a list of commands that somehow<br  />
+                work with the current working directory.<br  />
+              </p>
+
+              <p>
+                <b>apropos</b> is good for refreshing your memory, or for finding new commands to<br  />
+                explore!<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-2-6" class="outline-3">
+            <h3 id="sec-2-6"><span class="section-number-3">2.6</span> line based programs</h3>
+            <div class="outline-text-3" id="text-2-6">
+              <p>
+                You've seen several commands, like ls, uptime, and cowsay that do something,<br  />
+                and then immediately return you to the shell prompt. But not all programs do<br  />
+                that. Some programs are a little bit more interactive. They take over the terminal<br  />
+                for as long as they're running, and then we get the shell back when the program<br  />
+                exits. Take, for instance, ping. Ping lets you test whether another machine on<br  />
+                the internet is alive, and how long it takes to send a message to that machine<br  />
+                and back. Let's see you ping 8.8.8.8, which is Google's public DNS server. Very<br  />
+                fast and well connected, so we should always be able to get to it. Ping starts<br  />
+                and it prints out a line for each successful echo, but it doesn't stop on its<br  />
+                own and give you your shell back. Instead, you have to tell it to stop. One of<br  />
+                the most common ways to tell a program like this to stop is to type <b>Ctrl+C</b> which<br  />
+                sends the interrupt signal. When you do that, ping stops, prints out a summary,<br  />
+                and you get your shell prompt back.<br  />
+              </p>
+
+              <p>
+                But some programs have a different behavior. There's a really common design in<br  />
+                Linux programs where a program will read from what's called standard input, or<br  />
+                stdin and write to what's called standard output, or stdout. This allows programs<br  />
+                to be chained together on to a pipeline. When you run a program like this from<br  />
+                the terminal, it'll read from your keyboard input and write back to the terminal<br  />
+                screen. And very often when your input is done you want to send it an end of file<br  />
+                character which you do by typing <b>Ctrl+D</b>. Here's an example, The sort program,<br  />
+                which sorts lines in alphabetical order, if you run sort and then type or paste<br  />
+                in some text, it will print those lines out sorted. But it can't do any sorting<br  />
+                until it's received the last line and that's what typing <b>Ctrl+D</b> tells it. You<br  />
+                have to use <b>Ctrl+D</b> instead of <b>Ctrl+C</b> if you want the sorted output. <b>Ctrl+C</b><br  />
+                will just cause it to exit.<br  />
+              </p>
+
+              <p>
+                Programs like sort are called line based programs because they read input one<br  />
+                line at a time until they reach the end of the input. You can usually use them<br  />
+                on files as well as on text that you type in or paste into the terminal.<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-2-7" class="outline-3">
+            <h3 id="sec-2-7"><span class="section-number-3">2.7</span> waiting for input</h3>
+            <div class="outline-text-3" id="text-2-7">
+              <p>
+                Sometimes a program will be waiting for input, and if you want to get your shell<br  />
+                back, you have to know how to tell it either that the input is over or that it<br  />
+                should exit.<br  />
+              </p>
+
+              <p>
+                Let's take another look at an example. BC is a simple calculator program, you<br  />
+                can use it to do arithmetic. It knows about order of operations and parenthesis<br  />
+                and things like that. But when you're done using it and you want to exit, what<br  />
+                do you do?<br  />
+              </p>
+
+              <p>
+                Type "quit" or press <b>Ctrl+D</b><br  />
+              </p>
+            </div>
+          </div>
+
+
+          <div id="outline-container-sec-2-8" class="outline-3">
+            <h3 id="sec-2-8"><span class="section-number-3">2.8</span> full screen interactive programs: less</h3>
+            <div class="outline-text-3" id="text-2-8">
+              <p>
+                The man program, for reading the manual takes up a full terminal screen. It's<br  />
+                actually use another program called less that knows how to display text one page<br  />
+                at a time. So when you press Q to stop looking at a manual page. You're actually<br  />
+                using a command that less understands. And you can use less to display any file<br  />
+                you like not just man pags.<br  />
+              </p>
+
+              <p>
+                Scrolling up and down with arrow keys works the same way as it did before, and<br  />
+                man you can also scroll down a page at a time by using the <b>D</b> key or by hitting<br  />
+                the <b>Space Bar</b>. You can scroll up one page at a time with a <b>U</b> key. If you want<br  />
+                to skip to very last line of the file, you can use the <b>right angle bracket</b> for<br  />
+                that. To get back up to the first line use the <b>left angle bracket</b>. You can go<br  />
+                to a particular line by typing its <b>line number</b> and hitting Enter.<br  />
+              </p>
+
+              <p>
+                This is particularly useful when working with source code where you know the line<br  />
+                numbers of important lines. It's also useful when you decide to quickly move to<br  />
+                the middle of a file.<br  />
+              </p>
+
+              <p>
+                Less also has built-in search. Type <b>slash</b> and then the string you'd like to<br  />
+                search for. Press Enter or return to execute the search. You can find the next<br  />
+                occurrence of the search term by pressing <b>n</b>. To go bak to the previous occurrence,<br  />
+                use capital <b>N</b>. Search terms are case sensitive. If you're familiar with regular<br  />
+                expressions you can also use them here.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-2-9" class="outline-3">
+            <h3 id="sec-2-9"><span class="section-number-3">2.9</span> editing files in nano</h3>
+            <div class="outline-text-3" id="text-2-9">
+              <p>
+                You can run nano on any text file you happen to have on your Linux box. It takes<br  />
+                the file to edit as a command line parameter.<br  />
+              </p>
+
+              <p>
+                Control-X, usually written ^X, is the keystroke command to exit nano.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> the linux filesystem</h2>
+          <div class="outline-text-2" id="text-3">
+          </div><div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> the filesystem tree</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <p>
+                The two most important kinds of objects in a Linux server's filesystem are files<br  />
+                and directories. The rules for file and directory names in Linux are pretty flexible.<br  />
+                You can have spaces and filenames, you can have dots, you can at signs or accent<br  />
+                marks or whatever. The only thing you can't have is the slash character(/). And in<br  />
+                the shell, when you write a file name that contains spaces or certain punctuation<br  />
+                marks wuch as <b>!$#()[]%&amp;</b>, you have to put the file name in single quotes(''), or else<br  />
+                precede each one of the special characters including spaces with the back slash (\).<br  />
+                The reason for this is that these characters all have special meanings to the shell,<br  />
+                and putting a backslash(\) in front of them tells the shell to treat them as ordinary<br  />
+                characters.<br  />
+              </p>
+
+              <p>
+                Directories are nested inside each other, with the outermost or topmost being the<br  />
+                file system root or root directory. It's very common for there to be multiple discs<br  />
+                or disc partitions on a Linux system. Unlike on Windows, there aren't separate roots<br  />
+                for each disc, like C: or D: drives. There's just one filesystem root at the top of<br  />
+                the filesystem. This means that no matter what directory a file is in, you can<br  />
+                unambiguously refer to that file by giving the full path which starts at the root<br  />
+                and lists each directory on the way down to the individual file. The directory names<br  />
+                are separated by slashes.<br  />
+              </p>
+
+              <p>
+                Linux uses the forward slash to separate directories, whereas Windows uses the<br  />
+                back slash. The forward slash is the same one that you see in URLs, like<br  />
+                <a href="https://www.google.com">https://www.google.com</a>, or for writing fractions like 2/3, or in various other<br  />
+                uses.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-2" class="outline-3">
+            <h3 id="sec-3-2"><span class="section-number-3">3.2</span> the working directory</h3>
+            <div class="outline-text-3" id="text-3-2">
+              <p>
+                Your shell, and every other program for that matter, has a working directory.<br  />
+                You can think of this as the directory that it's looking at or focused on, or<br  />
+                the one that it uses as the default location for most commands to find files in.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-3" class="outline-3">
+            <h3 id="sec-3-3"><span class="section-number-3">3.3</span> absolute and relative paths</h3>
+            <div class="outline-text-3" id="text-3-3">
+              <p>
+                So, the top most directory in the file system is the root directory. And we<br  />
+                denote the root directory with a slash. You can describe the location of any<br  />
+                file or directory in the file system, with a full path beginning with a slash.<br  />
+                The full path is called the absolute path, and that means that it tells every<br  />
+                step that has to be taken from the root, or the absolute beginning of the file<br  />
+                system. Absolute paths are unambiguous and easy to understand, but they can also<br  />
+                be inconvenient to work with, especially if you're working with deeply nested<br  />
+                directories. To make things simpler, we can use relative paths instead. A file's<br  />
+                relative path, is its location relative to the current working directory. If you're<br  />
+                working with files in or near the current working directory, this can save you<br  />
+                a lot of typing. Every time you've referred to a file by just its name, you've<br  />
+                actually been using a relative path.<br  />
+              </p>
+
+              <p>
+                '.' points from each directory to itself.<br  />
+                '..' points from a directory to its parent.<br  />
+                ~ is an abbreviation for you own home dirctory.<br  />
+                Another handy shortcut is ~,<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-3-4" class="outline-3">
+            <h3 id="sec-3-4"><span class="section-number-3">3.4</span> cd without args</h3>
+            <div class="outline-text-3" id="text-3-4">
+              <p>
+                <b>cd</b> without arguments is a shortcut to take you home. As long as your home<br  />
+                directory exists, you can always go home.<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-3-5" class="outline-3">
+            <h3 id="sec-3-5"><span class="section-number-3">3.5</span> cd to not a dirctory</h3>
+            <div class="outline-text-3" id="text-3-5">
+              <p>
+                If you tried to CD a file, or cat a directory for that matter, you'll just get<br  />
+                a harmless error message.<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-3-6" class="outline-3">
+            <h3 id="sec-3-6"><span class="section-number-3">3.6</span> tab completion</h3>
+            <div class="outline-text-3" id="text-3-6">
+              <p>
+                Typing in long directory and file names is a big, boring pain and nobody likes<br  />
+                doing it. One way you can avoid running out of fingers is to use tab completion.<br  />
+                It works pretty much the same as tab completion for commands. As you're typing<br  />
+                a command or file path, just hit the tab key. If you've typed enough to distinguish<br  />
+                a single command or a single file, the shell will automatically complete it.<br  />
+                Otherwise it will go beep. Then if you press tab again it'll list all of the<br  />
+                possible completions for what you've typed.<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-3-7" class="outline-3">
+            <h3 id="sec-3-7"><span class="section-number-3">3.7</span> globbing</h3>
+            <div class="outline-text-3" id="text-3-7">
+              <p>
+                Any time you want to operate on a bunch of files that have similar names, you can<br  />
+                use a glob pattern to do it. I am not making up this name. Globbing is the real,<br  />
+                actual, technical term for matching files by name in the Unix shell. Seriously,<br  />
+                globbing. If you don't believe me you can look it up, man glob. Globbing is a<br  />
+                kind of pattern matching for file names. When you write a glob pattern in a shell<br  />
+                command, the shell turns that pattern into a list of file names that exist to<br  />
+                match the pattern.<br  />
+              </p>
+
+              <p>
+                For instance, a star matches any string of characters. You can use a star at<br  />
+                the beginning or at the end of a pattern. Patterns can be all sorts of differnet<br  />
+                lengths. A star can appear in the middle of a pattern.<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">ls b*png
+                </pre>
+              </div>
+              <p>
+                Matching all the files that start with B and end with png.<br  />
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-sh">ls app.{css,html}
+                </pre>
+              </div>
+              <p>
+                match files that end in either css or html.<br  />
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-sh">ls bea?.png
+                </pre>
+              </div>
+              <p>
+                A single question mark matches any one character.<br  />
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-sh">ls be??.png
+                </pre>
+              </div>
+              <p>
+                Two question marks matches two characters, and so on.<br  />
+              </p>
+
+              <div class="org-src-container">
+
+                <pre class="src src-sh">ls be[aeiou]r.png
+                </pre>
+              </div>
+              <p>
+                list of characters inside square brackets matches any one of the characters<br  />
+                inside those brackets.</p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
