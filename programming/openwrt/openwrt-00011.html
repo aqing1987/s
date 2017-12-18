@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>openwrt</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Openwrt /tmp used 46% where is the files?</h1>
+          <time datetime="2017-12-18">Dec 18 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. background</a></li>
+              <li><a href="#sec-3">3. analysis</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. use `lsof' for analysis</a></li>
+                  <li><a href="#sec-3-2">3.2. do check</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <p>
+              <a href="https://serverfault.com/questions/488132/tmp-used-100-where-is-files">https://serverfault.com/questions/488132/tmp-used-100-where-is-files</a><br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> background</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              The AP's cached memory cannot be dropped.<br  />
+            </p>
+
+            <p>
+              And I noticed the /tmp occupation reached 47%, 28.3M has been used.<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-info">root@xx:/tmp# df -h | grep \/tmp
+tmpfs                    60.4M     28.3M     32.2M  47% /tmp
+              </pre>
+            </div>
+
+            <p>
+              But there is no big file larger than 1MB exist in /tmp, how could it be?<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> analysis</h2>
+          <div class="outline-text-2" id="text-3">
+          </div><div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> use `lsof' for analysis</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <p>
+                You should use<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh"><span style="color: #75715E;"># </span><span style="color: #75715E;">lsof /tmp</span>
+                </pre>
+              </div>
+              <p>
+                to see currently opened file. If you delete a file, while a software still have a lock on it,<br  />
+                you won't see it anymore, but it will still have hd space assigned to it.<br  />
+              </p>
+
+              <p>
+                When you check the LSOF result, the `deleted' give you an idea of which file now only exist in<br  />
+                memory. Stopping the relevant process should free the space.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-2" class="outline-3">
+            <h3 id="sec-3-2"><span class="section-number-3">3.2</span> do check</h3>
+            <div class="outline-text-3" id="text-3-2">
+              <div class="org-src-container">
+
+                <pre class="src src-info">root@xx:~# ./lsof /tmp/
+COMMAND     PID USER   FD   TYPE DEVICE SIZE/OFF     NODE NAME
+a_manage  1815 root    3u   REG   0,12   513310  4493690 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root    6u   REG   0,12   396153 12136888 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root    8u   REG   0,12    90211 12386852 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   10u   REG   0,12    90581 12658636 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   11u   REG   0,12    50707 12929050 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   12u   REG   0,12    19560 13077672 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   13u   REG   0,12    30767 13139143 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   14u   REG   0,12    19560 13228409 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   15u   REG   0,12    31146 13286211 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   16u   REG   0,12    19560 13377152 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   17u   REG   0,12    31147 13436140 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   18u   REG   0,12     9166 13531208 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   19u   REG   0,12    30254 13565102 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   20u   REG   0,12    10735 13667063 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   21u   REG   0,12    10869 13701469 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   22u   REG   0,12     9169 13736800 /tmp/log/a_manage.log (deleted)
+a_manage  1815 root   23u   REG   0,12    24591 13774431 /tmp/log/a_manage.log
+wxm       3949 root    3w   REG   0,12 23098781     4047 /tmp/log/wxm.log (deleted)
+                </pre>
+              </div>
+
+              <p>
+                When I kill the a_manage, and wxm, I can drop the cached memory now.<br  />
+              </p>
+
+              <p>
+                So, the logs operation of wxm and a_manage should be verified to fix this issue.</p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
