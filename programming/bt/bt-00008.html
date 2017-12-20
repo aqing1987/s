@@ -333,7 +333,7 @@ APP_ERROR_CHECK(err_code);
                   <pre class="src src-c">ble_stack_init(<span style="color: #66D9EF;">void</span>)
   nrf_sdh_ble_enable(&amp;ram_start)
     sd_ble_enable(p_app_ram_start);
-                    <span style="color: #F92672;">if</span> (*p_app_ram_start != app_ram_start_link) {
+    <span style="color: #F92672;">if</span> (*p_app_ram_start != app_ram_start_link) {
         NRF_LOG_WARNING(<span style="color: #E6DB74;">"RAM starts at 0x%x, can be adjusted to 0x%x."</span>,
                         app_ram_start_link, *p_app_ram_start);
 
