@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>bluetooth</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">nRF52832 ble service tutorial</h1>
+          <time datetime="2017-12-20">Dec 20 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. my bluetooth environment</a></li>
+              <li><a href="#sec-3">3. the tutorial service sample</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. the mandatory services</a></li>
+                  <li><a href="#sec-3-2">3.2. add first service</a></li>
+                  <li><a href="#sec-3-3">3.3. advertising</a></li>
+                  <li><a href="#sec-3-4">3.4. summary</a></li>
+                  <li><a href="#sec-3-5">3.5. get the tutorial sample</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-4">4. base knowledge</a>
+                <ul>
+                  <li><a href="#sec-4-1">4.1. the Generic Attribute Profile (GATT)</a></li>
+                  <li><a href="#sec-4-2">4.2. services</a></li>
+                  <li><a href="#sec-4-3">4.3. Characteristics</a></li>
+                  <li><a href="#sec-4-4">4.4. Universally Unique ID (UUID)</a></li>
+                  <li><a href="#sec-4-5">4.5. client and server roles</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li><a href="https://devzone.nordicsemi.com/tutorials/8/">https://devzone.nordicsemi.com/tutorials/8/</a><br  />
+              </li>
+              <li><a href="https://github.com/NordicPlayground/nrf51-ble-tutorial-service">https://github.com/NordicPlayground/nrf51-ble-tutorial-service</a><br  />
+              </li>
+              <li><a href="https://www.bluetooth.com/specifications/gatt/generic-attributes-overview">https://www.bluetooth.com/specifications/gatt/generic-attributes-overview</a><br  />
+              </li>
+              <li><a href="https://devzone.nordicsemi.com/question/60/what-is-connection-parameters/">https://devzone.nordicsemi.com/question/60/what-is-connection-parameters/</a><br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> my bluetooth environment</h2>
+          <div class="outline-text-2" id="text-2">
+            <ul class="org-ul">
+              <li>nRF52 DK Development kit<br  />
+              </li>
+              <li>Keil V5.x<br  />
+              </li>
+              <li>SDK V14.2.0<br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> the tutorial service sample</h2>
+          <div class="outline-text-2" id="text-3">
+          </div><div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> the mandatory services</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <p>
+                Even before we have done anything, there are already two mandatory services set<br  />
+                up for us.<br  />
+              </p>
+            </div>
+            <div id="outline-container-sec-3-1-1" class="outline-4">
+              <h4 id="sec-3-1-1"><span class="section-number-4">3.1.1</span> the Generic Access Service</h4>
+              <div class="outline-text-4" id="text-3-1-1">
+                <ul class="org-ul">
+                  <li>The Generic Access Service<br  />
+                    Service UUID 0x1800. Three mandatory characteristics:<br  />
+                    <ul class="org-ul">
+                      <li>Characteristic: Device name. UUID 0x2A00<br  />
+                      </li>
+                      <li>Characteristic: Appearance. UUID 0x2A01<br  />
+                      </li>
+                      <li>Characteristic: Peripheral Preferred Connection Parameters UUID 0x2A04<br  />
+                      </li>
+                    </ul>
+                  </li>
+                  <li>The Generic Attribute service.<br  />
+                    Service UUID 0x1801. One optional characteristic:<br  />
+                    <ul class="org-ul">
+                      <li>Characteristic: Service Changed. UUID 0x2A05<br  />
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+
+                <p>
+                  visit<br  />
+                  <a href="https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.service.generic_access.xml">https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.service.generic_access.xml</a><br  />
+                </p>
+
+                <p>
+                  The Generic Access Service contains generic information about the device. All<br  />
+                  available Characteristics are readonly. You can recognize a characteristic holding<br  />
+                  the device name "OurService". The second characteristic holds the appearance value.<br  />
+                  The third characteristic holds various parameters used to establish a connection.<br  />
+                  You can recognise values from the #defines in the example called: MIN_CONN_INTERVAL,<br  />
+                  MAX_CONN_INTERVAL, SLAVE_LATENCY, and CONN_SUP_TIMEOUT.<br  />
+                </p>
+
+                <p>
+                  The connection parameters for a BLE connection is a set of parameters that determine<br  />
+                  when and how the Central and a Peripheral in a link transmits data. It is always<br  />
+                  the Central that actually sets the connection parameters used, but the Peripheral<br  />
+                  can send a so-called Connection Parameter Update Request, that the Central can<br  />
+                  then accept or reject.<br  />
+                </p>
+
+                <p>
+                  There are basically three different parameters:<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>Connection interval<br  />
+                    Determines how often the Central will ask for data from the peripheral. When<br  />
+                    the Peripheral requests an update, it supplies a maximum and a minimum wanted<br  />
+                    interval. The connection interval must be between 7.5ms and 4s.<br  />
+                  </li>
+                  <li>Slave latency<br  />
+                    By setting a non-zero slave latency, the Peripheral can choose to not answer<br  />
+                    when the Central asks for data up to the slave latency number of times. However,<br  />
+                    if the Peripheral has data to send, it can choose to send data at any time. This<br  />
+                    enables a peripheral to stay sleeping for a longer time, if it doesn't have data<br  />
+                    to send, but still send data fast if needed. The text book example of such<br  />
+                    device is for example keyboard and mice, which want to be sleeping for as long<br  />
+                    as possible when there is no data to send, but still have low latency (and for<br  />
+                    the mouse: low connection interval) when needed.<br  />
+                  </li>
+                  <li>Connection supervision timeout<br  />
+                    This timeout determines the timeout from the last data exchange till a link is<br  />
+                    considered lost. A central will not start trying to reconnect before the timeout<br  />
+                    has passed, so if you have a device which goes in and out of range often, and<br  />
+                    you need to notice when that happens, it might make sense to have a short timeout.<br  />
+                  </li>
+                </ul>
+
+                <p>
+                  For a BLE link the connection parameters control the frequency at which data can<br  />
+                  be exchanged between the peripheral and central once a BLE link has been established<br  />
+                  between the two. These parameters are negotiated between the central and peripheral<br  />
+                  during link establishment.<br  />
+                </p>
+
+                <p>
+                  The connection interval and slave latency typically affect the performance of a<br  />
+                  BLE link the most. The lower the slave latency and faster the connection interval<br  />
+                  the faster the effective data transfer rate between the peripheral and central.<br  />
+                  On the other hand this also leads to higher average current consumption in the<br  />
+                  peripheral.<br  />
+                </p>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-3-1-2" class="outline-4">
+              <h4 id="sec-3-1-2"><span class="section-number-4">3.1.2</span> the Generic Attribute Service</h4>
+              <div class="outline-text-4" id="text-3-1-2">
+                <p>
+                  The second service is the Generic Attribute Service. Simply put, this service can<br  />
+                  be used to notify the central of changes made to the fundamental structure of services<br  />
+                  and characteristics on the peripheral.<br  />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-2" class="outline-3">
+            <h3 id="sec-3-2"><span class="section-number-3">3.2</span> add first service</h3>
+            <div class="outline-text-3" id="text-3-2">
+            </div><div id="outline-container-sec-3-2-1" class="outline-4">
+              <h4 id="sec-3-2-1"><span class="section-number-4">3.2.1</span> declare a service structure</h4>
+              <div class="outline-text-4" id="text-3-2-1">
+                <p>
+                  First of all we need a place to store all data and information relevant to our<br  />
+                  service and to do this we will use the <b>ble_os_t</b> structure. As you can see in<br  />
+                  our_service.h. The <b>service_handle</b> is a number identifying this particular<br  />
+                  service and is assigned by the SoftDevice. Declare a variable called <b>m_our_service</b><br  />
+                  of type <b>ble_os_t</b> in main.c so that we can pass it to various functions and<br  />
+                  have complete control of our service.<br  />
+                </p>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-3-2-2" class="outline-4">
+              <h4 id="sec-3-2-2"><span class="section-number-4">3.2.2</span> initialize the service</h4>
+              <div class="outline-text-4" id="text-3-2-2">
+                <p>
+                  In main.c add <b>services_init()</b>. Inside this function we call <b>our_service_init()</b>.<br  />
+                  It takes a pointer to a <b>ble_os_t</b> struct as a parameter so make sure that you<br  />
+                  point to our <b>m_our_service</b> variable.<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c">our_service_init (&amp;m_our_service);
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-3-2-3" class="outline-4">
+              <h4 id="sec-3-2-3"><span class="section-number-4">3.2.3</span> add UUIDs to ble stack table</h4>
+              <div class="outline-text-4" id="text-3-2-3">
+                <p>
+                  Look up the definition of <b>our_service_init()</b> in our_service.c. We create a UUID<br  />
+                  for our service. Since we are going to make a custom service we will use the<br  />
+                  defined base UUID together with a 16-bit UUID.<br  />
+                </p>
+
+                <p>
+                  add code below:<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c"><span style="color: #66D9EF;">uint32_t</span>   <span style="color: #FD971F;">err_code</span>;
+<span style="color: #66D9EF;">ble_uuid_t</span>        <span style="color: #FD971F;">service_uuid</span>;
+<span style="color: #66D9EF;">ble_uuid128_t</span>     <span style="color: #FD971F;">base_uuid</span> = BLE_UUID_OUR_BASE_UUID;
+service_uuid.uuid = BLE_UUID_OUR_SERVICE;
+err_code = sd_ble_uuid_vs_add(&amp;base_uuid, &amp;service_uuid.type);
+APP_ERROR_CHECK(err_code);
+                  </pre>
+                </div>
+                <p>
+                  What this code does is to create two variables. One will hold our 16-bit service<br  />
+                  UUID and the other the base UUID. In the fourth line we add our vendor specific<br  />
+                  UUID (hence the 'vs') to a table of UUIDs in the BLE stack.<br  />
+                </p>
+
+                <p>
+                  Using a vendor specific UUID is basically a two-step process<br  />
+                </p>
+                <ul class="org-ul">
+                  <li>add your custom base UUID to the stack<br  />
+                    by using sd_ble_uuid_vs_add(). store the value returned to you in the p_type<br  />
+                    parameter of this function call.<br  />
+                  </li>
+                  <li>set the type of all ble_uuid_t<br  />
+                    that should use this base to the value returned to you from sd_ble_uuid_vs_add()<br  />
+                    When you set this field to your custom type instead of to BLE_UUID_TYPE_BLE, the<br  />
+                    value will be used on top of the custom base UUID you specified instead of on<br  />
+                    top of the Bluetooth SIG base.<br  />
+                  </li>
+                </ul>
+
+                <p>
+                  Behind the scenes, sd_ble_uuid_vs_add() will add the base UUID to the SoftDevice's<br  />
+                  internal list of base UUIDs, and return the table index for this UUID in the type<br  />
+                  field. When using the type in a ble_uuid_t later, the SoftDevice can look up the<br  />
+                  base used in this same table by using this index.<br  />
+                </p>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-3-2-4" class="outline-4">
+              <h4 id="sec-3-2-4"><span class="section-number-4">3.2.4</span> error fix</h4>
+              <div class="outline-text-4" id="text-3-2-4">
+                <p>
+                  You can skip this step if there is no <b>No Memory for operation</b> issue.<br  />
+                </p>
+
+                <p>
+                  When I debug this code, I got err_code = 0x04 from <b>sd_ble_gatts_service_add()</b><br  />
+                  which means <b>No Memory for operation</b>. to fix this issue, change code in<br  />
+                  sdk_config.h from<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c"><span style="color: #F92672;">#if</span><span style="color: #F92672; font-weight: bold;">n</span><span style="color: #F92672;">def</span> NRF_SDH_BLE_VS_UUID_COUNT
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">NRF_SDH_BLE_VS_UUID_COUNT</span> 0
+<span style="color: #F92672;">#endif</span>
+                  </pre>
+                </div>
+
+                <p>
+                  to<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c"><span style="color: #F92672;">#if</span><span style="color: #F92672; font-weight: bold;">n</span><span style="color: #F92672;">def</span> NRF_SDH_BLE_VS_UUID_COUNT
+<span style="color: #F92672;">#define</span> <span style="color: #FD971F;">NRF_SDH_BLE_VS_UUID_COUNT</span> 7
+<span style="color: #F92672;">#endif</span>
+                  </pre>
+                </div>
+
+                <p>
+                  Then modify *Options for Target 'nrf52832_xxaa'*, change IRAM1 start address.<br  />
+                  The value can be got by debug. the debug path as below:<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c">ble_stack_init(<span style="color: #66D9EF;">void</span>)
+  nrf_sdh_ble_enable(&amp;ram_start)
+    sd_ble_enable(p_app_ram_start);
+                    <span style="color: #F92672;">if</span> (*p_app_ram_start != app_ram_start_link) {
+        NRF_LOG_WARNING(<span style="color: #E6DB74;">"RAM starts at 0x%x, can be adjusted to 0x%x."</span>,
+                        app_ram_start_link, *p_app_ram_start);
+
+        NRF_LOG_WARNING(<span style="color: #E6DB74;">"RAM size can be adjusted to 0x%x."</span>,
+                        ram_end_address_get() - (*p_app_ram_start));
+    }
+                  </pre>
+                </div>
+
+                <p>
+                  Then set the IRAM1 start value to be the value showed in *p_app_ram_start.<br  />
+                </p>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-3-2-5" class="outline-4">
+              <h4 id="sec-3-2-5"><span class="section-number-4">3.2.5</span> add our service</h4>
+              <div class="outline-text-4" id="text-3-2-5">
+                <p>
+                  Now initialize our service. Type in the following right after the previous code:<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c">err_code = sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY,
+                                    &amp;service_uuid,
+                                    &amp;p_our_service-&gt;service_handle);
+APP_ERROR_CHECK(err_code);
+                  </pre>
+                </div>
+
+                <p>
+                  The <b>sd_ble_gatts_service_add()</b> function takes three parameters. In the first<br  />
+                  parameter we specify that we want a primary service. The other option here is<br  />
+                  to use BLE_GATTS_SRVC_TYPE_SECONDARY to create a secondary service. The use of<br  />
+                  secondary services are rare, but sometimes used to nest services inside other<br  />
+                  services. The second parameter is a pointer to the service UUID that we created.<br  />
+                  By passing this variable to <b>sd_ble_gatts_service_add()</b> our service can be<br  />
+                  uniquely identified by the BLE stack.<br  />
+                </p>
+
+                <p>
+                  Compile, download, and open nRF Connect again. Hit connect and do another service<br  />
+                  discovery. Now you should see our service with its custom UUID at the bottom.<br  />
+                  You can recognize the base UUID from the <b>#define in our_service.h</b> and if you<br  />
+                  look closely you should also recognize our 16-bit service UUID:<br  />
+                  0000ABCD-1212-EFDE-1523-785FEF13D123<br  />
+                </p>
+
+                <blockquote>
+                  <p>
+                    Either iOS or nRFConnect caches some ble information, so connecting/reconnecting is<br  />
+                    useless without turning the phone's ble off and on. That refreshes everything<br  />
+                    and the new characteristics show up. Figured it out by trying to delete services<br  />
+                    and they stayed on nRFConnect even after they had been deleted from code and<br  />
+                    reflashed.<br  />
+                  </p>
+                </blockquote>
+
+                <p>
+                  When you connect to your device using nRF Connect. some events occur in the BLE<br  />
+                  stack.<br  />
+                  The first event is a Generic Access Profile(GAP) event, BLE_GAP_EVT_CONNECTED,<br  />
+                  indicating that a connection has been set up with connection handle value 0x00.<br  />
+                  If you ever make an application that has several connections you will get several<br  />
+                  connection handles, each with a unique handle value. After a few seconds you will<br  />
+                  get the BLE_GAP_EVT_CONN_PARAM_UPDATE event indicating that the nRF Connect and<br  />
+                  your device have renegotiated the connection parameters.<br  />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-3" class="outline-3">
+            <h3 id="sec-3-3"><span class="section-number-3">3.3</span> advertising</h3>
+            <div class="outline-text-3" id="text-3-3">
+            </div><div id="outline-container-sec-3-3-1" class="outline-4">
+              <h4 id="sec-3-3-1"><span class="section-number-4">3.3.1</span> declare variable holding our service UUID</h4>
+              <div class="outline-text-4" id="text-3-3-1">
+                <p>
+                  Inside the <b>advertising_init()</b> function in main.c declare a variable holding<br  />
+                  our service uuid like this:<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c"><span style="color: #66D9EF;">ble_uuid_t</span> <span style="color: #FD971F;">m_adv_uuids</span>[] = {BLE_UUID_OUR_SERVICE, BLE_UUID_TYPE_VENDOR_BEGIN};
+                  </pre>
+                </div>
+
+                <p>
+                  BLE_UUID_OUR_SERVICE is our service UUID and BLE_UUID_TYPE_VENDOR_BEGIN indicates<br  />
+                  that it is a part of a vendor specific base UUID. More specifically BLE_UUID_TYPE_VENDOR_BEGIN<br  />
+                  is an index pointing to our base UUID in the table of UUIDs that we initated in<br  />
+                  <b>our_service_init()</b>.<br  />
+                </p>
+              </div>
+            </div>
+
+            <div id="outline-container-sec-3-3-2" class="outline-4">
+              <h4 id="sec-3-3-2"><span class="section-number-4">3.3.2</span> declare and instantiate the scan response</h4>
+              <div class="outline-text-4" id="text-3-3-2">
+                <p>
+                  add the UUID to the scan response packet like this:<br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-c">init.srdata.uuids_complete.uuid_cnt = <span style="color: #F92672;">sizeof</span>(m_adv_uuids) / <span style="color: #F92672;">sizeof</span>(m_adv_uuids[0]);
+init.srdata.uuids_complete.p_uuids = m_adv_uuids;
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-3-4" class="outline-3">
+            <h3 id="sec-3-4"><span class="section-number-3">3.4</span> summary</h3>
+            <div class="outline-text-3" id="text-3-4">
+              <p>
+                So now the first basic service has been setup. If you want to add more srevices<br  />
+                you can easily just replicate the <b>our_service_init()</b> function and define more<br  />
+                service UUIDs.<br  />
+              </p>
+
+              <p>
+                Note: the characteristics have not been added yet.<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-3-5" class="outline-3">
+            <h3 id="sec-3-5"><span class="section-number-3">3.5</span> get the tutorial sample</h3>
+            <div class="outline-text-3" id="text-3-5">
+              <p>
+                you can get the tutorial sample from<br  />
+                <a href="https://github.com/aqing1987/s-bt/tree/master/nRF52832/s_ble_app_service_tutorial">https://github.com/aqing1987/s-bt/tree/master/nRF52832/s_ble_app_service_tutorial</a><br  />
+              </p>
+
+              <p>
+                and then put it to<br  />
+              </p>
+              <blockquote>
+                <p>
+                  nRF5_SDK_14.2.0_17b948a/examples/ble_peripheral<br  />
+                </p>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> base knowledge</h2>
+          <div class="outline-text-2" id="text-4">
+          </div><div id="outline-container-sec-4-1" class="outline-3">
+            <h3 id="sec-4-1"><span class="section-number-3">4.1</span> the Generic Attribute Profile (GATT)</h3>
+            <div class="outline-text-3" id="text-4-1">
+              <blockquote>
+                <p>
+                  The GATT Profile specifies the structure in which profile data is exchanged.<br  />
+                  This structure defines basic elements such as services and characteristics,<br  />
+                  used in a profile.<br  />
+                </p>
+              </blockquote>
+
+              <p>
+                In other words, it is a set of rules describing how to bundle, present and<br  />
+                transfer data using BLE. Read Bluetooth Core Specification v5.0, vol.3 Part G.<br  />
+              </p>
+
+              <p>
+                The Generic Attributes (GATT) define a hierarchical data structure that is<br  />
+                exposed to connected BLE devices. GATT profiles enable extensive innovation<br  />
+                while still maintaining full interoperability with other Bluetooth devices.<br  />
+                The profile describes a use case, roles and general behaviors based on the GATT<br  />
+                functionality. Services are collections of characteristics and relationships<br  />
+                to other services that encapsulate the behavior of part of a device. This also<br  />
+                includes hierarchy of services, characteristics and attributes used in the attribute<br  />
+                server.<br  />
+              </p>
+
+              <p>
+                GATT is built on top of the Attribute Protocol (ATT), which uses GATT data to<br  />
+                define the way that two Bluetooth Low Energy devices send and receive standard<br  />
+                messages. Note that GATT is not used in Bluetooth BR/EDR implementations, which<br  />
+                use only adopted profiles.<br  />
+              </p>
+
+              <p>
+                The top level of the hierarchy is a profile, which is composed of one or more<br  />
+                services necessary to fulfill a use case. A service is composed of characteristics<br  />
+                or references to other services.<br  />
+              </p>
+
+              <p>
+                GATT groups these services to encapsulate the behavior of part of a device, and<br  />
+                describes a use case, roles and general behaviors based on the GATT functionality.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-2" class="outline-3">
+            <h3 id="sec-4-2"><span class="section-number-3">4.2</span> services</h3>
+            <div class="outline-text-3" id="text-4-2">
+              <p>
+                The Bluetooth Core Specification defines a service like this:<br  />
+              </p>
+              <blockquote>
+                <p>
+                  A service is a collection of data and associated behaviors to accomplish a<br  />
+                  particular function or feature. A service definition may contain mandatory<br  />
+                  characteristics and optional characteristics.<br  />
+                </p>
+              </blockquote>
+
+              <p>
+                In Other words, a service is a collection of information, like e.g. values of<br  />
+                sensors. Bluetooth SIG has predefined certain services. For example they have<br  />
+                defined a service called Heart Rate service. The reason why they have done this<br  />
+                is to make it easier for developers to make apps and firmware compatible with<br  />
+                the standard Heart Rate service. However, this does not mean that you can't make<br  />
+                your own heart rate sensor based on your own ideas and service structures.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-3" class="outline-3">
+            <h3 id="sec-4-3"><span class="section-number-3">4.3</span> Characteristics</h3>
+            <div class="outline-text-3" id="text-4-3">
+              <p>
+                The Bluetooth Core Specification defines a service like this:<br  />
+              </p>
+              <blockquote>
+                <p>
+                  A characteristic is a value used in a service along with properties and configuration<br  />
+                  information about how the value is accessed and information about how the value<br  />
+                  is displayed or represented.<br  />
+                </p>
+              </blockquote>
+
+              <p>
+                In other words, the characteristic is where the actual values and information is<br  />
+                presented. Security parameters, units and other metadata concerning the information<br  />
+                are also encapsulated in the characteristics.<br  />
+              </p>
+
+              <p>
+                An analogy might be a storage room filled with filing cabinets and each filing<br  />
+                cabinet has a number of drawers. The GATT profile in this analogy is the storage<br  />
+                room. The cabinets are the services, and the drawers are characteristics holding<br  />
+                various information. Some of the drawers might also have locks on them restricting<br  />
+                the access to its information.<br  />
+              </p>
+
+              <p>
+                Imagine a heart rate monitor watch for example. Watches like this typically use<br  />
+                at least two services:<br  />
+              </p>
+
+              <ul class="org-ul">
+                <li>A Heart rate service. It encapsulates three characteristics:<br  />
+                  <ul class="org-ul">
+                    <li>A mandatory Heart Rate Measurement characteristic holding the heart rate value.<br  />
+                    </li>
+                    <li>An optional Body Sensor Location characteristic.<br  />
+                    </li>
+                    <li>A conditional Heart Rate Control Point characteristic.<br  />
+                    </li>
+                  </ul>
+                </li>
+
+                <li>A Battery service<br  />
+                  <ul class="org-ul">
+                    <li>Mandatory Battery level characteristic.<br  />
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+
+              <p>
+                Now why bother with this? Why not just send whatever data you need directly<br  />
+                without the fuzz of bundling it in characteristics and services? The reasons are<br  />
+                flexibility, efficiency, cross platform compatibilities and ease of implementation.<br  />
+                When iPhones, Android tablets or Windows laptops discover a device advertising a<br  />
+                heart rate service they can be 100% sure to find at least the heart rate measurement<br  />
+                characteristic and the characteristic is guaranteed to be presented in a standardized<br  />
+                way. If a device contains more than one service you are free to pick and choose<br  />
+                the services and characteristics you like. By bundling information this way devices<br  />
+                can quickly discover what information is available and communicate only what is<br  />
+                strictly needed and thereby save precious time and energy. Remember that BLE is<br  />
+                all about low energy.<br  />
+              </p>
+
+              <p>
+                To continue the analogy: the storage room is located in a small business office<br  />
+                and has two filing cabinets. The first cabinet is used by the accountants. The<br  />
+                drawers contain files with financial details of the business, sorted by date.<br  />
+                The drawers are locked and only the accountants and the upper management have<br  />
+                access to them. The second cabinet is used by Human Resources and contains records<br  />
+                over the employees, sorted in alphabetical order. These drawers are also locked<br  />
+                and only HR and upper management have access to them. Everyone in the business<br  />
+                knows where the storage room is and what it is for, but only some people have<br  />
+                access to it and use it. It ensures efficiency, security and order.<br  />
+              </p>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-4" class="outline-3">
+            <h3 id="sec-4-4"><span class="section-number-3">4.4</span> Universally Unique ID (UUID)</h3>
+            <div class="outline-text-3" id="text-4-4">
+              <p>
+                A UUID is an abbreviation you will see a lot in the BLE world. It is a unique<br  />
+                number used to identify services, characteristics and descriptors, also known as<br  />
+                attributes. These IDs are transmitted over the air so that e.g. a peripheral can<br  />
+                inform a central what services it provides. To save transmitting air time and<br  />
+                memory space in your nRF51 there are two kinds of UUIDs.<br  />
+              </p>
+
+              <p>
+                The first type is a short 16-bit UUID. The predefined Heart rate service, e.g.,<br  />
+                has the UUID 0x180D and one of its enclosed characteristics, the Heart Rate<br  />
+                Measurement characteristic, has the UUID 0x2A37. The 16-bit UUID is energy and<br  />
+                memory efficient, but since it only provides a relatively limited number of<br  />
+                unique IDs there is a rule; you can only transmit the predefined Bluetooth SIG<br  />
+                UUIDs directly over the air. Hence there is a need for a second type of UUID<br  />
+                so you can transmit your own custom UUIDs as well.<br  />
+              </p>
+
+              <p>
+                The second type is a 128-bit UUID, sometimes referred to as a vendor specific<br  />
+                UUID. This is the type of UUID you need to use when you are making your own<br  />
+                custom services and characteristics. It looks something like this:<br  />
+                4A98xxxx-1CC4-E7C1-C757-F1267DD021E8 and is called the "base UUID". The four x's<br  />
+                represent a field where you will insert your own 16-bit IDs for your custom<br  />
+                services and characteristics and use them just like a predefined UUID. This way<br  />
+                you can store the base UUID once in memory, forget about it, and work with 16-bit<br  />
+                IDs as normal. You can generate base UUIDs using nRFgo Studio.<br  />
+              </p>
+
+              <p>
+                A little fun fact about UUIDs: There is no database ensuring that no one in the<br  />
+                world is sharing the same UUID.<br  />
+              </p>
+            </div>
+          </div>
+          <div id="outline-container-sec-4-5" class="outline-3">
+            <h3 id="sec-4-5"><span class="section-number-3">4.5</span> client and server roles</h3>
+            <div class="outline-text-3" id="text-4-5">
+              <p>
+                GATT defines client and server roles. GATT procedures can be considered to be<br  />
+                split into three basic types: Discovery procedures, Client-initiated procedures<br  />
+                and Server-initiated procedures. The GATT server stores the data transported<br  />
+                over the ATT and accepts ATT requests, commands and confirmations from the GATT<br  />
+                client. The GATT server sends responses to requests and sends indications and<br  />
+                notifications asynchronously to the GATT client when specified events occur on<br  />
+                the GATT server. GATT also specifies the format of data contained on the GATT<br  />
+                server.<br  />
+              </p>
+
+              <p>
+                To see all the adopted GATT-based specifications, visit<br  />
+                <a href="https://www.bluetooth.com/specifications/gatt">https://www.bluetooth.com/specifications/gatt</a></p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
