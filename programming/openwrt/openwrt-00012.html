@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>openwrt</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Openwrt15.05 how to set environment variables for process</h1>
+          <time datetime="2017-12-22">Dec 22 2017</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. background</a></li>
+              <li><a href="#sec-3">3. analysis</a></li>
+              <li><a href="#sec-4">4. fix steps</a>
+                <ul>
+                  <li><a href="#sec-4-1">4.1. analysis the env related code</a></li>
+                </ul>
+              </li>
+              <li><a href="#sec-5">5. error fix</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <p>
+              <a href="https://wiki.openwrt.org/inbox/procd-init-scripts">https://wiki.openwrt.org/inbox/procd-init-scripts</a><br  />
+              <a href="https://stackoverflow.com/questions/7669409/setenv-unsetenv-putenv">https://stackoverflow.com/questions/7669409/setenv-unsetenv-putenv</a><br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> background</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              I am porting Bluetopia app to Openwrt15.05, and I write the Bluetopia app's boot<br  />
+              script according to Procd style.<br  />
+            </p>
+
+            <p>
+              The Bluetopia libs used the system environment variable for setting bluetooth<br  />
+              address. And the pointed system environment <b>BTHOST_BD_ADDR</b> should exist in the<br  />
+              process space.<br  />
+            </p>
+
+            <p>
+              I cannot find any desired system environment by using the following checking<br  />
+              code:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-c"><span style="color: #F92672;">extern</span> <span style="color: #66D9EF;">char</span> **<span style="color: #FD971F;">environ</span>;
+<span style="color: #66D9EF;">char</span> **<span style="color: #FD971F;">env</span> = environ;
+<span style="color: #F92672;">while</span> (*env) {
+  printf(<span style="color: #E6DB74;">"%s\n"</span>, *env);
+  env++;
+}
+              </pre>
+            </div>
+
+            <p>
+              the result as below:<br  />
+            </p>
+            <blockquote>
+              <p>
+                SHLVL=1<br  />
+                HOME=/<br  />
+                TERM=linux<br  />
+                PWD=/<br  />
+                PATH=/usr/sbin:/usr/bin:/sbin:/bin<br  />
+              </p>
+            </blockquote>
+
+            <p>
+              Also you can check the environment variables for a running process by using<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">strings &#8211;a /proc/&lt;pid_of_the_process&gt;/environ
+              </pre>
+            </div>
+
+            <p>
+              Even thouth, I used the <b>setenv()</b> api to set the pointed environment variable,<br  />
+              but the variable cannot be set (showing 'null' from <b>getenv()</b>).<br  />
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> analysis</h2>
+          <div class="outline-text-2" id="text-3">
+            <p>
+              Every process has its own copy of the environment variables. That they inherit<br  />
+              from parent is just a convention. If you use execve you can set them to whatever<br  />
+              you want. Manipulation of one process's copy never affects any other existing<br  />
+              process, and in particular, nothing a child process does can change its parent's<br  />
+              copy of the environment.<br  />
+            </p>
+
+            <p>
+              So the environment variables below are belong to the <b>procd</b>.<br  />
+            </p>
+            <blockquote>
+              <p>
+                SHLVL=1<br  />
+                HOME=/<br  />
+                TERM=linux<br  />
+                PWD=/<br  />
+                PATH=/usr/sbin:/usr/bin:/sbin:/bin<br  />
+              </p>
+            </blockquote>
+
+            <p>
+              the App we created inherit the environment variables from <b>procd</b>.<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-4" class="outline-2">
+          <h2 id="sec-4"><span class="section-number-2">4</span> fix steps</h2>
+          <div class="outline-text-2" id="text-4">
+            <p>
+              change the boot script, pass the environment variables by using<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">procd_set_param env
+              </pre>
+            </div>
+
+            <p>
+              sample as below:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">procd_open_instance
+procd_set_param env <span style="color: #FD971F;">BTHOST_BD_ADDR</span>=${<span style="color: #FD971F;">BTHOST_BD_ADDR</span>}
+procd_set_param command <span style="color: #E6DB74;">"${APP}"</span>
+procd_set_param respawn
+procd_close_instance
+              </pre>
+            </div>
+          </div>
+
+          <div id="outline-container-sec-4-1" class="outline-3">
+            <h3 id="sec-4-1"><span class="section-number-3">4.1</span> analysis the env related code</h3>
+            <div class="outline-text-3" id="text-4-1">
+              <p>
+                Analysis from the boot script:<br  />
+              </p>
+
+              <ul class="org-ul">
+                <li>/etc/init.d/bluetopia<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-sh"><span style="color: #A6E22E;">start_service</span>()
+  procd_open_instance
+  procd_close_instance
+                    </pre>
+                  </div>
+                </li>
+
+                <li>/etc/rc.common<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-sh">rc_procd start_service <span style="color: #E6DB74;">"$@"</span>
+  procd_open_service <span style="color: #E6DB74;">"$(basename ${basescript:-$initscript})"</span> <span style="color: #E6DB74;">"$initscript"</span>
+  procd_close_service
+                    </pre>
+                  </div>
+                </li>
+
+                <li>search "procd_open_service" in procd src directory<br  />
+                </li>
+                <li>ipkg-ipq806x/procd/lib/functions/procd.sh<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-sh">_procd_wrapper procd_open_service
+  _procd_call _procd_open_service
+    json_add_object instances
+                    </pre>
+                  </div>
+                </li>
+
+                <li>all arguments are packed into json and send over to procd via ubus<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-sh">procd_close_service
+  _procd_close_service()
+    _procd_ubus_call set
+      ubus call service set <span style="color: #E6DB74;">"$(json_dump)"</span>
+                    </pre>
+                  </div>
+                </li>
+
+                <li>procd/service/service.c<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-c">UBUS_METHOD(<span style="color: #E6DB74;">"set"</span>, service_handle_set, service_set_attrs),
+  service_handle_set()
+    service_alloc()
+      vlist_init(&amp;s-&gt;instances, avl_strcmp, service_instance_update);
+    service_update()
+    service_event(<span style="color: #E6DB74;">"service.start"</span>, s-&gt;name, <span style="color: #AE81FF;">NULL</span>);
+      ubus_notify(ctx, &amp;main_object, type, b.head, -1);
+                    </pre>
+                  </div>
+                  <p>
+                    Then<br  />
+                  </p>
+                  <div class="org-src-container">
+
+                    <pre class="src src-c">service_instance_update()
+  <span style="color: #F92672;">else</span> <span style="color: #F92672;">if</span> (in_n) {
+      DEBUG(2, <span style="color: #E6DB74;">"Create instance %s::%s\n"</span>, in_n-&gt;srv-&gt;name, in_n-&gt;name);
+      instance_start(in_n);
+  }
+                    </pre>
+                  </div>
+                </li>
+              </ul>
+
+
+              <ul class="org-ul">
+                <li>ubus/libubus-req.c<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-c">ubus_notify()
+  __ubus_notify_async()
+    ubus_start_request()
+      ubus_send_msg()
+                    </pre>
+                  </div>
+                </li>
+
+                <li>ubus/libubus-io.c<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-c">ubus_send_msg()
+  writev_retry()
+    cur_len = sendmsg(fd, &amp;msghdr, 0);
+                    </pre>
+                  </div>
+                </li>
+
+                <li>procd/service/instance.c<br  />
+                  <div class="org-src-container">
+
+                    <pre class="src src-c">instance_start()
+  instance_run()
+    blobmsg_list_for_each(&amp;in-&gt;env, var)
+      setenv(blobmsg_name(var-&gt;data), blobmsg_data(var-&gt;data), 1);
+    execvp(argv[0], argv);
+                    </pre>
+                  </div>
+                </li>
+              </ul>
+
+
+              <p>
+                Add some debug logs:<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-c"><span style="color: #A6E22E;">blobmsg_list_for_each</span>(&amp;in-&gt;env, <span style="color: #66D9EF;">var</span>)
+{
+    setenv(blobmsg_name(var-&gt;data), blobmsg_data(var-&gt;data), 1);
+                  <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">cmd</span>[128];
+    sprintf(cmd, <span style="color: #E6DB74;">"echo [%s - %s] &gt;&gt; /tmp/xx1"</span>,
+            blobmsg_name(var-&gt;data), (<span style="color: #66D9EF;">char</span>*)blobmsg_data(var-&gt;data));
+    system(cmd);
+}
+                </pre>
+              </div>
+
+              <p>
+                After the system booted up, I check the /tmp/xx1<br  />
+              </p>
+              <div class="org-src-container">
+
+                <pre class="src src-sh">root@xx:/tmp# cat xx1
+[BTHOST_BD_ADDR - 0x34AA0B7FA1CF]
+                </pre>
+              </div>
+
+              <p>
+                So, It's been verified that we pass the environment virables by using<br  />
+                <b>procd_set_param env</b>, and in the end procd use <b>setenv</b> and <b>execvp</b> start<br  />
+                the APP, in which has the pointed environment virable we need.<br  />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-sec-5" class="outline-2">
+          <h2 id="sec-5"><span class="section-number-2">5</span> error fix</h2>
+          <div class="outline-text-2" id="text-5">
+            <p>
+              When I do the test, I encounter a issue that I cannot boot my process by using:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">root@xx:# /etc/init.d/bluetopia start
+              </pre>
+            </div>
+
+            <p>
+              The reason is that I add a '\' after the last line of the env. as below:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">procd_open_instance
+procd_set_param command <span style="color: #E6DB74;">"${APP_SCANNER}"</span>
+procd_set_param respawn
+procd_set_param env <span style="color: #FD971F;">BTHOST_BD_ADDR</span>=${<span style="color: #FD971F;">BTHOST_BD_ADDR</span>} <span style="color: #E6DB74; font-weight: bold;">\</span>
+                <span style="color: #FD971F;">BTHOST_XCAL_TRIM</span>=${<span style="color: #FD971F;">BTHOST_XCAL_TRIM</span>} <span style="color: #E6DB74; font-weight: bold;">\</span>
+procd_close_instance
+              </pre>
+            </div>
+
+            <p>
+              To fix this issue, we need remove the last '\', the fixed code:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">procd_open_instance
+procd_set_param command <span style="color: #E6DB74;">"${APP_SCANNER}"</span>
+procd_set_param respawn
+procd_set_param env <span style="color: #FD971F;">BTHOST_BD_ADDR</span>=${<span style="color: #FD971F;">BTHOST_BD_ADDR</span>} <span style="color: #E6DB74; font-weight: bold;">\</span>
+                <span style="color: #FD971F;">BTHOST_XCAL_TRIM</span>=${<span style="color: #FD971F;">BTHOST_XCAL_TRIM</span>}
+procd_close_instance
+              </pre>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
