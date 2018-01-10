@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>buildbot</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">buildbot fix `skipping build - no important changes' issue</h1>
+          <time datetime="2018-01-10">Jan 10 2018</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. background</a></li>
+              <li><a href="#sec-2">2. analysis</a></li>
+              <li><a href="#sec-3">3. fix steps</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> background</h2>
+          <div class="outline-text-2" id="text-1">
+            <p>
+              I use buildbot 0.9.7.<br  />
+            </p>
+
+            <p>
+              But when I commit some changes about <b>.js</b> files, the nightly build will not<br  />
+              be triggered.<br  />
+            </p>
+
+            <p>
+              Check the <b>master/twistd.log</b><br  />
+              I got the following info:<br  />
+            </p>
+            <blockquote>
+              <p>
+                Nightly scheduler &lt;YY-Nightly&gt;: skipping build - No important changes<br  />
+              </p>
+            </blockquote>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> analysis</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              I read the buildbot doc, and find a clue:<br  />
+            </p>
+
+            <blockquote>
+              <p>
+                <b>Files</b><br  />
+                It also has a list of <b>files</b>, which are just the tree-relative filenames of<br  />
+                any files that were added, deleted, or modified for this <b>Change</b>. These<br  />
+                filenames are used by the <b>fileIsImportant</b> function (in the scheduler) to<br  />
+                decide whether it is worth triggering a new build or not.<br  />
+              </p>
+
+              <p>
+                <b>fileIsImportant</b><br  />
+                A callable which takes one argument, a Change instance, and returns True if the<br  />
+                change is worth building, and False if it not. Unimportant Changes are accumulated<br  />
+                until the build is triggered by an important change. The default value of None<br  />
+                means that all Changes are important.<br  />
+              </p>
+
+              <p>
+                <b>onlyImportant</b><br  />
+                A boolean that, when True, only adds important changes to the buildset as specified<br  />
+                in the <b>fileIsImportant</b> callable. This means that unimportant changes are ignored<br  />
+                the same way a <b>change_filter</b> filters changes. This defaults to False and only<br  />
+                applies when <b>fileIsImportant</b> is given.<br  />
+              </p>
+            </blockquote>
+
+            <p>
+              The buildbot code path:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-sh">/usr/local/lib/python2.7/dist-packages/buildbot
+              </pre>
+            </div>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> fix steps</h2>
+          <div class="outline-text-2" id="text-3">
+            <p>
+              add<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-python"><span style="color: #FD971F;">fileIsImportant</span>=<span style="color: #AE81FF;">None</span>,
+<span style="color: #FD971F;">onlyImportant</span>=<span style="color: #AE81FF;">False</span>,
+              </pre>
+            </div>
+
+            <p>
+              to <b>schedulers.Nightly</b>. Code as below:<br  />
+            </p>
+            <div class="org-src-container">
+
+              <pre class="src src-python">c[<span style="color: #E6DB74;">'schedulers'</span>].append(schedulers.Nightly(
+                <span style="background-color: #64645E;"> </span>   name=<span style="color: #E6DB74;">'yy-Nightly'</span>,
+                <span style="background-color: #64645E;"> </span>   branch=branch_name,
+                <span style="background-color: #64645E;"> </span>   change_filter=util.ChangeFilter(branch=branch_name),
+                <span style="background-color: #64645E;"> </span>   builderNames=[<span style="color: #E6DB74;">"yyb"</span>],
+                <span style="background-color: #64645E;"> </span>   hour=23,
+                <span style="background-color: #64645E;"> </span>   minute=00,
+                <span style="background-color: #64645E;"> </span>   fileIsImportant=<span style="color: #AE81FF;">None</span>,
+                <span style="background-color: #64645E;"> </span>   onlyImportant=<span style="color: #AE81FF;">False</span>,
+                <span style="background-color: #64645E;"> </span>   onlyIfChanged=<span style="color: #AE81FF;">True</span>))
+              </pre>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
