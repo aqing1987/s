@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>linux</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">Go fix cannot find package issue</h1>
+          <time datetime="2018-02-27">Feb 27 2018</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. reference</a></li>
+              <li><a href="#sec-2">2. description</a></li>
+              <li><a href="#sec-3">3. fix steps</a>
+                <ul>
+                  <li><a href="#sec-3-1">3.1. go get the package</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> reference</h2>
+          <div class="outline-text-2" id="text-1">
+            <ul class="org-ul">
+              <li><a href="https://github.com/golang/go/issues/9976">https://github.com/golang/go/issues/9976</a><br  />
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> description</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              When I do the <b>Exercise: Slices</b> on a tour of Go<br  />
+            </p>
+
+            <p>
+              The following issue comes:<br  />
+            </p>
+            <blockquote>
+              <p>
+                ➜  moretypes git:(next) go build exercise-slices.go<br  />
+                exercise-slices.go:3:8: cannot find package "golang.org/x/tour/pic" in any of:<br  />
+                /usr/local/go/src/golang.org/x/tour/pic (from $GOROOT)<br  />
+                /home/workspace/go/src/golang.org/x/tour/pic (from $GOPATH)<br  />
+              </p>
+            </blockquote>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-3" class="outline-2">
+          <h2 id="sec-3"><span class="section-number-2">3</span> fix steps</h2>
+          <div class="outline-text-2" id="text-3">
+          </div><div id="outline-container-sec-3-1" class="outline-3">
+            <h3 id="sec-3-1"><span class="section-number-3">3.1</span> go get the package</h3>
+            <div class="outline-text-3" id="text-3-1">
+              <div class="org-src-container">
+
+                <pre class="src src-sh">$ go get golang.org/x/tour/pic
+                </pre>
+              </div>
+
+              <p>
+                But the following issue comes again:<br  />
+              </p>
+              <blockquote>
+                <p>
+                  ➜  moretypes git:(next) go get golang.org/x/tour/pic<br  />
+                  package golang.org/x/tour/pic: unrecognized import path "golang.org/x/tour/pic"<br  />
+                  (https fetch: Get <a href="https://golang.org/x/tour/pic?go-get=1">https://golang.org/x/tour/pic?go-get=1</a>: dial tcp<br  />
+                  [2a00:1450:400e:800::200e]:443: connect: network is unreachable)<br  />
+                </p>
+              </blockquote>
+
+              <p>
+                The reason is that `golang.org` cann't be accessed from China mainland.<br  />
+              </p>
+            </div>
+
+            <div id="outline-container-sec-3-1-1" class="outline-4">
+              <h4 id="sec-3-1-1"><span class="section-number-4">3.1.1</span> activate proxy</h4>
+              <div class="outline-text-4" id="text-3-1-1">
+                <p>
+                  Activate the proxy at shell help to <b>go get</b><br  />
+                </p>
+                <div class="org-src-container">
+
+                  <pre class="src src-sh"><span style="color: #F92672;">export</span> {http,https,ftp}<span style="color: #FD971F;">_proxy</span>=<span style="color: #E6DB74;">'http://127.0.0.1:8118'</span>
+                  </pre>
+                </div>
+
+                <p>
+                  Note: make sure you have the proxy first.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
