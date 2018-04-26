@@ -1,0 +1,40 @@
+#+title: When to use the `retain' feature for mosquitto_publish
+#+options: ^:nil
+
+* issues
+As we know, the MQTT system is consist of broker, subscriber and publisher.
+The requirement for my task is when the device boot up, ask the configuration
+from the server, this means, I should set my device as publisher, the remote
+server is a subscriber.
+
+If the subscriber has been connected to broker, once the publisher connected
+to broker, we can publish message successfully.
+
+However, if the subscriber is not connected to broker, though the publisher
+connected to the broker, but the we can not publish message successfully.
+More worse, the message can be published only one time when the process start,
+if the message cannot be sent to the subscriber, it will lost!
+
+* fix
+check the [[https://mosquitto.org/api/files/mosquitto-h.html#mosquitto_publish][mosquitto_publish]] API info.
+
+#+BEGIN_SRC c
+libmosq_EXPORT int mosquitto_publish(struct mosquitto* mosq,
+                                     int* mid,
+                                     const char* topic,
+                                     int payloadlen,
+                                     const void* payload,
+                                     int qos,
+                                     bool retain)
+#+END_SRC
+
+And I notice the parameter *retain*, meaning set to true to make the message
+retained.
+
+Once set the it as *true*, the key published message will be retained in
+broker, when the subscriber connected to the broker, broker will send the
+retained message to subscriber, then my issue fixed.
+
+Note:
+For the repeated message or not important message, we should set the retain
+as *false* to reduce the broker load.

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>mqtt</title>
+    <link rel="shortcut icon" href="/images/s.ico">
+    <link type="text/css" rel="stylesheet" href="/css/main.css">
+    <link type="text/css" rel="stylesheet" href="/css/org-mode.css">
+  </head>
+  <body>
+    <header class="top">
+      <a href="/index.html">
+        <img src="/images/s-logo.png" alt="s">
+      </a>
+    </header>
+
+    <nav>
+      <ul id="menu">
+        <li><a id="booklist" href="/booklist/">BOOKLIST</a></li>
+        <li><a id="programmingactive" href="/programming/">PROGRAMMING</a></li>
+        <li><a id="projects" href="/projects/">PROJECTS</a></li>
+      </ul>
+    </nav>
+
+    <section id="leftmenu">
+      <ul id="programmingmenulist">
+        <li><a href="../">Back</a></li>
+      </ul>
+    </section>
+
+    <section id="blog">
+      <article>
+        <header>
+          <h1 class="title">When to use the `retain' feature for mosquitto_publish</h1>
+          <time datetime="2018-04-26">Apr 26 2018</time>
+        </header>
+        <br/>
+
+        <div id="table-of-contents">
+          <h2>Table of Contents</h2>
+          <div id="text-table-of-contents">
+            <ul>
+              <li><a href="#sec-1">1. issues</a></li>
+              <li><a href="#sec-2">2. fix</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-1" class="outline-2">
+          <h2 id="sec-1"><span class="section-number-2">1</span> issues</h2>
+          <div class="outline-text-2" id="text-1">
+            <p>
+              As we know, the MQTT system is consist of broker, subscriber and publisher.<br  />
+              The requirement for my task is when the device boot up, ask the configuration<br  />
+              from the server, this means, I should set my device as publisher, the remote<br  />
+              server is a subscriber.<br  />
+            </p>
+
+            <p>
+              If the subscriber has been connected to broker, once the publisher connected<br  />
+              to broker, we can publish message successfully.<br  />
+            </p>
+
+            <p>
+              However, if the subscriber is not connected to broker, though the publisher<br  />
+              connected to the broker, but the we can not publish message successfully.<br  />
+              More worse, the message can be published only one time when the process start,<br  />
+              if the message cannot be sent to the subscriber, it will lost!<br  />
+            </p>
+          </div>
+        </div>
+
+        <div id="outline-container-sec-2" class="outline-2">
+          <h2 id="sec-2"><span class="section-number-2">2</span> fix</h2>
+          <div class="outline-text-2" id="text-2">
+            <p>
+              check the <a href="https://mosquitto.org/api/files/mosquitto-h.html#mosquitto_publish">mosquitto_publish</a> API info.<br  />
+            </p>
+
+            <div class="org-src-container">
+
+              <pre class="src src-c">libmosq_EXPORT <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">mosquitto_publish</span>(<span style="color: #F92672;">struct</span> <span style="color: #66D9EF;">mosquitto</span>* <span style="color: #FD971F;">mosq</span>,
+                <span style="color: #66D9EF;">int</span>* <span style="color: #FD971F;">mid</span>,
+                <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">char</span>* <span style="color: #FD971F;">topic</span>,
+                <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">payloadlen</span>,
+                <span style="color: #F92672;">const</span> <span style="color: #66D9EF;">void</span>* <span style="color: #FD971F;">payload</span>,
+                <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">qos</span>,
+                <span style="color: #66D9EF;">bool</span> <span style="color: #FD971F;">retain</span>)
+              </pre>
+            </div>
+
+            <p>
+              And I notice the parameter <b>retain</b>, meaning set to true to make the message<br  />
+              retained.<br  />
+            </p>
+
+            <p>
+              Once set the it as <b>true</b>, the key published message will be retained in<br  />
+              broker, when the subscriber connected to the broker, broker will send the<br  />
+              retained message to subscriber, then my issue fixed.<br  />
+            </p>
+
+            <p>
+              Note:<br  />
+              For the repeated message or not important message, we should set the retain<br  />
+              as <b>false</b> to reduce the broker load.</p>
+          </div>
+        </div>
+
+      </article>
+
+      <footer>
+        <p>&copy; MMXVII</p>
+      </footer>
+    </section>
+  </body>
+</html>
