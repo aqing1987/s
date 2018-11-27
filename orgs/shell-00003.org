@@ -1,0 +1,51 @@
+#+TITLE: Be Careful when sourcing a script
+#+OPTIONS: ^:nil
+
+* Bug Description
+The story comes from my assistant for my colleague to debug an issue.
+
+Process A Logic as below:
+#+BEGIN_SRC sh
+  while Process A does not get result Y from script ddcc.sh
+        sh ddcc.sh
+
+#+END_SRC
+
+and the script logic for ddcc.sh as below:
+#+BEGIN_SRC sh
+  . /lib/ipp88x.sh
+  local h=$(ipp88x_name)
+  result=Y
+#+END_SRC
+
+The phenomenon is, Process A invoke ddcc.sh again and again, and
+never stop.
+
+* Reason
+There is no file /lib/ipp88x.sh exist!
+and when run the script ddcc.sh, the code below:
+#+BEGIN_SRC sh
+  . /lib/ipp88x.sh
+#+END_SRC
+
+will stop the script ddcc.sh and return error immediately! 
+with error below:
+#+BEGIN_SRC sh
+  ddcc.sh: .: line 3: can't open '/lib/ipp88x.sh'
+#+END_SRC
+
+and the code below will never reached
+#+BEGIN_SRC sh
+  result=Y
+#+END_SRC
+
+* Background Knowledge
+#+BEGIN_SRC sh
+  . MyScript
+#+END_SRC
+The execute command (a single period) followed by the name of the
+script.
+
+The difference between that and using the *sh* command is that
+the *sh* command starts a new process and the execute command does
+not.
