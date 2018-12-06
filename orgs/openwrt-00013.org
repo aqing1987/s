@@ -1,0 +1,46 @@
+#+TITLE: Restart ubusd leads to objects lost
+#+OPTIONS: ^:nil
+
+* Description
+
+I came across an issue, when I invoke ubus command:
+#+BEGIN_SRC sh
+  root@AP-D5:20:~# logread -f
+  Failed to connect to ubus
+#+END_SRC
+
+And any ubus related command will lead to the error output
+#+BEGIN_SRC sh
+  Failed to connect to ubus
+#+END_SRC
+
+Then I killed the ubusd process, and the *procd* will reborn it with
+another pid.
+
+But after ubusd process reborned, many registered objects lost in the
+new borned ubusd, check below info:
+#+BEGIN_SRC sh
+  root@AP-22:39:~# ubus list | wc -l
+  47
+  root@AP-22:39:~# ps | grep ubusd
+    432 root       936 S    /sbin/ubusd
+   3978 root      1524 S    grep ubusd
+  root@AP-22:39:~# killall ubusd
+  root@AP-22:39:~# ps | grep ubusd
+   4503 root       896 S    /sbin/ubusd
+   5385 root      1524 S    grep ubusd
+  root@AP-22:39:~# ubus list | wc -l
+  26
+#+END_SRC
+
+As above, after ubusd restart, there are 21 objects lost.
+
+* Solution
+So I have to monitor the ubus issue 'Failed to connect to ubus'.
+If it occures, I have to reboot the board for now.
+
+current ubus version: *f361bfa5fcb2daadf3b160583ce665024f8d108e*
+
+
+* Reference
++ https://openwrt.org/docs/techref/ubus
