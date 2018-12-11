@@ -1,0 +1,34 @@
+#+TITLE: Recover USB lost space via DiskPart
+#+OPTIONS: ^:nil
+
+* Description
+Everytime I burn an OS image to the USB drive, I lost my USB drive
+space. Take a note how to recover it via DiskPart in Windows.
+
+Note: Be very careful while working over the disk management console
+window. If you don't know what you're doing, you may crash your
+system.
+
+* Reason
+The freeware image burner completely changed the system partition on
+the USB drive and after the image was burned, all the unused space
+has been automatically unallocated.
+
+Now all you have to do is delete the existing partitions on the USB
+drive and recreate a new partition from Windows Disk management console.
+
+* Steps
+- Click Windows start menu, type "Diskpart" and click
+
+- input command as below
+  #+BEGIN_SRC sh
+    list disk
+    select disk NUM // the removable USB drive NUM should >= 1
+    clean
+    create partition primary
+    list partition
+    exit
+  #+END_SRC
+
+- unplug USB and plug it back again
+
