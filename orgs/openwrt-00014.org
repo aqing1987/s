@@ -1,0 +1,93 @@
+#+TITLE: Openwrt 15.05 enable taskset
+#+OPTIONS: ^:nil
+
+* Install taskset in openwrt
+Taskset can be enabled in busybox.
+#+BEGIN_SRC sh
+  Base system  --->
+    <*> busybox
+      Miscellaneous Utilities  --->
+        [*] taskset
+#+END_SRC
+
+After select, build the busybox package.
+#+BEGIN_SRC sh
+  make package/busybox/{clean,prepare,compile} V=s
+#+END_SRC
+
+After build, download the built busybox to board.
+
+In board, do the following operations:
+#+BEGIN_SRC sh
+  tftp -gr busybox 192.168.1.10
+  chmod +x busybox
+  ln -s busybox taskset
+#+END_SRC
+
+* Test taskset command
+** View the CPU Affinity of a running Process
+To retrieve the CPU affinity information of a process, use the
+following format. taskset returns the current CPU affinity in a
+hexadecimal bitmask format.
+#+BEGIN_SRC sh
+  taskset -p <PID>
+#+END_SRC
+
+For example, to check the CPU affinit of /sbin/procd with PID 1:
+#+BEGIN_SRC sh
+  root@AP-:/tmp# ./taskset -p 1                                                   
+  pid 1's current affinity mask: f
+#+END_SRC
+
+In this example, the returned affinity (represented in a hexadecimal
+bitmask) corresponds to "1111" in binary format, which means the
+process can run on any of 4 different CPU cores (from 0 to 3).
+
+The lowest bit a hexadecimal bitmask corresponds to core ID 0, the
+second lowest bit from the right to core ID 1, the third lowest bit
+to core ID 2, etc.
+
+** Pin a Running Process to Particular CPU Core(s)
+#+BEGIN_SRC sh
+taskset -p <COREMASK> <PID>
+#+END_SRC
+
+e.g.
+#+BEGIN_SRC sh
+  root@AP-:/tmp# ./taskset -p 0x1 1                                               
+  pid 1's current affinity mask: f                                                
+  pid 1's new affinity mask: 1
+#+END_SRC
+
+** Launch a Program on Specific CPU Cores
+taskset also allows you to launch a new program as pinned to
+specific CPU cores. For that, use the following format.
+#+BEGIN_SRC sh
+  taskset <COREMASK> <EXECUTABLE>
+#+END_SRC
+
+For example, to launch vlc on a CPU core 0, use the following command.
+#+BEGIN_SRC sh
+  taskset 0x1 vlc
+#+END_SRC
+
+* Knowledge
+One operating system (OS) support often exploited to run performance-critical
+applications on multi-core processors is so-called "processor affinity"
+or "CPU pinning". This is an OS-specific feature that "binds" a running
+process or program to particular CPU core(s).
+
+Binding a program to specific CPU cores can be benefical in several
+scenarios. For example, when an application with highly cache-bound
+workload runs together with other CPU-intensive jobs, pinning the
+application to a specific CPU would reduce CPU cache misses. Also,
+when two processes communicate via shared memory intensively, scheduling
+both processes on the cores in the same NUMA domain would speed up
+their performance.
+
+To assign particular CPU cores to a program or process, you can use
+*taskset*, a command line tool for retrieving or setting a process'
+CPU affinity on Linux.
+
+* Reference
++ http://xmodulo.com/run-program-process-specific-cpu-cores-linux.html
