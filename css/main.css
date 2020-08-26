@@ -1,7 +1,7 @@
 /* Site-wide formatting of standard tags */
 /* ===================================== */
 body {
-  background: #f5f5d5;
+  background: #fafbfc!important;
   font-family: Verdana, Geneva, sans-serif, Arial;
   font-size: 80%;
   color: black;
