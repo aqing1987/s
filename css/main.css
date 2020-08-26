@@ -416,3 +416,9 @@ time {
 .boxitem a { text-decoration: none; color: #641212;}
 .boxitem a:hover { text-decoration: underline; color: #c40f0f; }
 .boxitem a:active { color: #ff0000; }
+
+img.show {
+  max-width: 500px;
+  width: 500px;
+  overflow:hidden;
+}
