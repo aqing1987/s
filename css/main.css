@@ -83,6 +83,20 @@ hr {
   height: 1px;
 }
 
+blockquote {
+  background-color: #f5f2f0;
+  padding: 0.6em;
+  margin: 1em 1em;
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  border-radius: 0.5em;
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  border-width: 0.3em;
+  border-color: #e0dfcc;
+  border-style: solid;
+  text-shadow: 0 1px white;
+  overflow: auto;
+}
+
 
 /* Header: logo, top menu and search     */
 /* ===================================== */
